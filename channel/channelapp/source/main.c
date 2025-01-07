@@ -291,6 +291,7 @@ void main_real(void) {
 	bool reloced;
 	bool ahb_access;
 	bool launch_bootmii;
+	bool reboot_console;
 
 	u64 frame;
 	bool exit_about;
@@ -333,6 +334,7 @@ void main_real(void) {
 	reloced = false;
 	ahb_access = false;
 	launch_bootmii = false;
+	reboot_console = false;
 
 	frame = 0;
 	exit_about = false;
@@ -451,9 +453,16 @@ void main_real(void) {
 					exit_about = false;
 
 					continue;
-
+				// either launch bootmii or reboot the console, depending on if a vwii is detected
 				case 2:
-					launch_bootmii = true;
+					if (is_vwii())
+					{
+						reboot_console = true;
+						should_exit = true;
+					}
+					else {
+						launch_bootmii = true;
+					}
 					should_exit = true;
 					break;
 
@@ -807,6 +816,11 @@ void main_real(void) {
 		loader_exec (ep);
 	}
 
+	if (reboot_console) {
+		gprintf ("rebooting console\n");
+		STM_RebootSystem();
+	}
+
 	if (shutdown) {
 		gprintf ("shutting down\n");
 		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
@@ -822,4 +836,3 @@ int main(int argc, char *argv[]) {
 	gprintf("uh oh\n");
 	return 0;
 }
-

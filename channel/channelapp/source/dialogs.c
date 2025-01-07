@@ -81,13 +81,17 @@ void dialogs_theme_reinit (void) {
 		"dhewg (EWRONGCHAN) - application code, geckoloader code\n"
 		"blasty (ESTONED) - application code\n"
 		"marcan (EFAILURE) - reload stub, banner, installer, packaging\n"
-		"bushing (EWANTPONY) - socket code, loader code\n"
+		"bushing (EWANTPONY) (RIP) - socket code, loader code\n"
 		"segher (EBUGFOUND) - nandloader stub code\n"
 		"souLLy (ENOTHERE) - banner graphics\n"
 		"drmr (EMORECOWBELL) - banner audio, channel graphics\n"
-		"mha (E404) - update server and hosting";
+		"mha (E404) - update server and hosting\n"
+		"aep (EWII) - forking and adding features\n";
 
 	string_about_post =
+		"GitHub repository available at https://github.com/Aeplexi/hbc\n\n"
+
+
 		"Powered by devkitPPC and libogc, by shagkur, WinterMute, "
 		"and everyone else who contributed\n\n"
 
