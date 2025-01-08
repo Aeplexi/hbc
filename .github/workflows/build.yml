@@ -21,6 +21,10 @@ jobs:
       run: |
         mkdir ~/.wii/
         echo $WII_COMMON_KEY > ~/.wii/common-key
+    - name: Install Dependencies
+      run: |
+        sudo apt update && \
+        sudo apt install -y sox gettext libpng-dev xxd
     - name: Build WiiPAX
       run: |
         cd wiipax
