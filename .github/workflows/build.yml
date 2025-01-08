@@ -14,13 +14,13 @@ jobs:
     name: Build using devkitPPC via Docker
     steps:
     - uses: actions/checkout@v4
-    - name: Store Common Key
+    - name: Retrieve Common Key from Secret
       shell: bash
       env:
         WII_COMMON_KEY: ${{ secrets.WII_COMMON_KEY }}
       run: |
         mkdir ~/.wii/
-        echo $WII_COMMON_KEY > ~/.wii/common-key
+        echo $WII_COMMON_KEY | base64 --decode > ~/.wii/common-key
     - name: Install Dependencies
       run: |
         sudo apt update && \
