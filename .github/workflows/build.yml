@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update && \
-        sudo apt install -y sox gettext libpng-dev xxd
+        sudo apt install -y gcc sox gettext libpng-dev xxd
     - name: Build WiiPAX
       run: |
         cd wiipax
