@@ -1,0 +1,36 @@
+name: Build HBC
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc
+    name: Build using devkitPPC via Docker
+    steps:
+    - uses: actions/checkout@v4
+    - name: Store Common Key
+      shell: bash
+      env:
+        WII_COMMON_KEY: ${{ secrets.WII_COMMON_KEY }}
+      run: |
+        mkdir ~/.wii/
+        echo $WII_COMMON_KEY > ~/.wii/common-key
+    - name: Build WiiPAX
+      run: |
+        cd wiipax
+        make
+    - name: Build HBC
+      run: |
+        cd channel
+        make
+    - name: Publish WAD
+      uses: actions/upload-artifact@v4
+      with:
+        path: "channel/title/channel_retail.wad"
+        name: The Homebrew Channel
