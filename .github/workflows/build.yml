@@ -25,6 +25,10 @@ jobs:
       run: |
         sudo apt update && \
         sudo apt install -y gcc sox gettext libpng-dev xxd python2
+    - name: Install pip2 and Python Dependencies
+      run: |
+        curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python2
+        pip2 install pycryptodomex
     - name: Build WiiPAX
       run: |
         cd wiipax
