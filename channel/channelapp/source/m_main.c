@@ -12,6 +12,7 @@
 #include "panic.h"
 #include "m_main.h"
 #include "title.h"
+#include "wiiinfo.h"
 
 static view *v_m_main;
 
@@ -124,30 +125,6 @@ const char* get_system_menu_version_string(u16 number) {
     return "Unknown version"; // no system menu version installed, or weird patched one?
 }
 
-
-/*const u16 VersionList[] = 
-{
-//	J		U		E		K
-
-	64,		33,		66,					// 1.0
-	128,	97,		130,				// 2.0
-					162,				// 2.1
-	192,	193,	194,				// 2.2
-	224,	225,	226,				// 3.0
-	256,	257,	258,				// 3.1
-	288,	289,	290,				// 3.2
-	352,	353,	354,	326,		// 3.3
-	384,	385,	386, 				// 3.4
-							390, 		// 3.5
-	416,	417,	418,				// 4.0
-	448,	449,	450,	454, 		// 4.1
-	480,	481,	482,	486, 		// 4.2
-	512,	513, 	514,	518, 		// 4.3/vWii 1.0.0
-	544,	545,	546,				// vWii 4.0.0
-	608,	609,	610					// vWii 5.2.0
-};
-*/
-
 static u16 get_tmd_version(u64 title) {
 	STACK_ALIGN(u8, tmdbuf, 1024, 32);
 	u32 tmd_view_size = 0;
@@ -192,7 +169,8 @@ void m_main_deinit(void) {
 void m_main_theme_reinit(void) {
 	u16 x, y, yadd;
 	int i;
-	char buffer[20];
+	char bufferwiinote[55];
+	char buffer[50];
 
 	text_no_ip = _("Network not initialized");
 	text_has_ip = _("Your Wii's IP is %u.%u.%u.%u");
@@ -232,22 +210,29 @@ void m_main_theme_reinit(void) {
 
 	widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL, _("Shutdown"));
 	
-	// HBC Version
-
-	widget_label (&v_m_main->widgets[5], view_width / 3 * 2 - 16, 32, 0,
-				  CHANNEL_VERSION_STR, view_width / 3 - 32, FA_RIGHT,
-				  FA_ASCENDER, FONT_LABEL);
-
-	// IOS and System Menu Version
+	// Wii Menu Version and Model
 
 	u16 system_menu_tmd_version = get_tmd_version(0x0000000100000002ll);
+	char* system_menu_version_string = get_system_menu_version_string(system_menu_tmd_version);
 
-	sprintf(buffer, "Ver. %s, IOS%d v%d.%d", get_system_menu_version_string(system_menu_tmd_version), IOS_GetVersion(), IOS_GetRevisionMajor(),
+	char* wii_revision = get_wii_model();
+
+	// SM/Wii Revision
+
+	sprintf(bufferwiinote, "SM %s (v%d) [%s]", system_menu_version_string, system_menu_tmd_version, wii_revision);
+
+	widget_label (&v_m_main->widgets[5], view_width / 3 * 2 - 32, 32, 0,
+				  bufferwiinote, view_width / 3 - 0, FA_RIGHT,
+				  FA_ASCENDER, FONT_LABEL);
+
+	// HBC and IOS version
+
+	sprintf(buffer, "HBC v%s, IOS%d v%d.%d", CHANNEL_VERSION_STR, IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
-	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 16,
+	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 32,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
-				  view_width / 3 - 32, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	inited_widgets = true;
 }
