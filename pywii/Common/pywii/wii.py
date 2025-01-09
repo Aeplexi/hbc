@@ -39,12 +39,13 @@ signkeyfuncs = [ load_rsa_key, load_rsa_key, None ]
 NULL_IV = "\x00"*16
 
 keylist = [
-    "common-key",
-    "sd-key",
-    "sd-iv",
-    "md5-blanker",
-    "root-key",
-    "korean-key",
+    "common-key"
+    # unnecessary
+    #"sd-key",
+    #"sd-iv",
+    #"md5-blanker",
+    #"root-key",
+   # "korean-key",
 ]
 
 keys = {}
@@ -194,7 +195,8 @@ def get_readable_title(titleid, shortname = False):
 def loadkeys(path = None):
     keys.clear()
     if path is None:
-        path = os.path.join(os.environ["HOME"], ".wii")
+        path = os.getcwd()
+        print(path)
 
     for key in keylist:
         try:
@@ -1763,4 +1765,3 @@ class WiiFSTBuilder:
             fstdir.add(d)
         else:
             raise ValueError("Bad file: %s"%path)
-

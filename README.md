@@ -1,4 +1,5 @@
 # The Homebrew Channel
+# This entire README needs a rewrite!
 
 This repository contains the public release of the source code for
 The Homebrew Channel.
@@ -20,8 +21,7 @@ the official version of The Homebrew Channel, which includes additional
 protection features (i.e. we had to add reverse-DRM to stop scammers from
 selling it).
 
-This code is released with no warranty, and hasn't even been tested on a real
-Wii, only under Dolphin (yes, this release runs under Dolphin).
+This has been tested on a real Wii, a Wii mini, and a vWii (Wii U).
 
 ## Build instructions
 
@@ -48,8 +48,6 @@ Additionally, you'll need the following packages on your host machine:
 
 The build process has only been tested on Linux. You're on your own if you
 want to try building this on OSX or Windows.
-
-You'll need the Wii common key installed as ~/.wii/common-key.
 
 First run 'make' in wiipax, then 'make' in channel. You'll find a .wad file
 that you can install or directly run with Dolphin under

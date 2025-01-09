@@ -113,7 +113,7 @@ struct system_menu_version version_table[] = {
 		{4610, "4.3E (Wii mini)"}
 };
 
-const char* get_system_menu_version_string(u16 number) {
+char* get_system_menu_version_string(u16 number) {
     u8 table_size = sizeof(version_table) / sizeof(version_table[0]);
 
     for (u8 i = 0; i < table_size; i++) {
