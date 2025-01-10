@@ -108,11 +108,11 @@ static void bubble_pop(int i) {
 		score += bubbles[i].speed * 50;
 		score += bubbles[i].xm * 30;
 		score += bubbles[i].py;
-		pop_cooldown = 60;
+		pop_cooldown = 10;
 	}
 	entries_bubbles[i].entity.color = 0x00000000;
 
-	/*for (j = 0; j < bubbles[i].popcnt; j++) {
+	for (j = 0; j < bubbles[i].popcnt; j++) {
 		int tex;
 		float sa;
 		float dx,dy;
@@ -140,7 +140,7 @@ static void bubble_pop(int i) {
 					FRAND (BUBBLE_POP_SIZE_MAX - BUBBLE_POP_SIZE_MIN)) *
 					entries_bubbles[i].entity.scale;
 		entries_sub_bubbles[i][j].entity.rad = entries_bubbles[i].entity.rad;
-	}*/
+	}
 }
 
 void bubbles_init(void) {
@@ -190,7 +190,7 @@ void bubble_update(bool wm, s32 x, s32 y) {
 						BUBBLE_POP_RADIUS;
 
 				if (!sub_bubbles[i][j].popped && wm) {
-					if(!viewing)
+					if(!viewing && (pop_cooldown == 0))
 						score += 30;
 					float cx = coords->x + entries_bubbles[i].entity.entity->w/2;
 					float cy = coords->y - entries_bubbles[i].entity.entity->h/2;
