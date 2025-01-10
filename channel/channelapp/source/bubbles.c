@@ -112,7 +112,7 @@ static void bubble_pop(int i) {
 	}
 	entries_bubbles[i].entity.color = 0x00000000;
 
-	for (j = 0; j < bubbles[i].popcnt; j++) {
+	/*for (j = 0; j < bubbles[i].popcnt; j++) {
 		int tex;
 		float sa;
 		float dx,dy;
@@ -140,7 +140,7 @@ static void bubble_pop(int i) {
 					FRAND (BUBBLE_POP_SIZE_MAX - BUBBLE_POP_SIZE_MIN)) *
 					entries_bubbles[i].entity.scale;
 		entries_sub_bubbles[i][j].entity.rad = entries_bubbles[i].entity.rad;
-	}
+	}*/
 }
 
 void bubbles_init(void) {
