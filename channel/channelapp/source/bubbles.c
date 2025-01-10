@@ -186,7 +186,7 @@ void bubble_update(bool wm, s32 x, s32 y) {
 						entries_sub_bubbles[i][j].entity.entity->w / 2 *
 						BUBBLE_POP_RADIUS;
 
-				if (!sub_bubbles[i][j].popped && wm) {
+				if (sub_bubbles[i][j].popped && wm) {
 					if(!viewing)
 						score += 30;
 					float cx = coords->x + entries_bubbles[i].entity.entity->w/2;
