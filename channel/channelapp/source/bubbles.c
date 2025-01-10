@@ -33,7 +33,7 @@ static bubble bubbles[MAX_BUBBLE_COUNT];
 static bubble sub_bubbles[MAX_BUBBLE_COUNT][BUBBLE_POP_MAX];
 
 static int bubble_count = -1;
-static int bubble_cooldown = 0;
+static int pop_cooldown = 0;
 extern int score;
 extern int viewing;
 
@@ -103,11 +103,11 @@ static void bubble_pop(int i) {
 	int j;
 	bubbles[i].popped = 1;
 	bubbles[i].popcnt = IRAND(BUBBLE_POP_MAX - BUBBLE_POP_MIN) + BUBBLE_POP_MIN;
-	if(!viewing && (pop_cooldown == 0) {
+	if(!viewing && (pop_cooldown == 0)) {
 		score += bubbles[i].speed * 50;
 		score += bubbles[i].xm * 30;
 		score += bubbles[i].py;
-		pop_cooldown == 60;
+		pop_cooldown = 60;
 	}
 	entries_bubbles[i].entity.color = 0x00000000;
 
@@ -165,6 +165,7 @@ void bubble_update(bool wm, s32 x, s32 y) {
 	gfx_coordinates *coords;
 	f32 radius;
 
+	pop_cooldown--;
 	bubble_update_count();
 
 	for (i = 0; i < bubble_count; ++i) {
