@@ -167,6 +167,8 @@ void bubble_update(bool wm, s32 x, s32 y) {
 	f32 radius;
 
 	pop_cooldown--;
+	if (pop_cooldown < 0)
+		pop_cooldown = 0;
 	bubble_update_count();
 
 	for (i = 0; i < bubble_count; ++i) {
