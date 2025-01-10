@@ -190,7 +190,8 @@ def get_readable_title(titleid, shortname = False):
 def loadkeys(path = None):
     keys.clear()
     if path is None:
-        path = os.path.join(os.environ["HOME"], ".wii")
+        path = os.getcwd()
+        print("Loading keys from: " + path)
 
     for key in keylist:
         try:
