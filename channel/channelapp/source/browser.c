@@ -58,12 +58,12 @@ void browser_theme_reinit(void) {
 					theme_gfx[THEME_ARROW_RIGHT_FOCUS]);
 	widget_image (&v_browser->widgets[2],
 					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w -
-					theme_gfx[THEME_LAN_ACTIVE]->w, 412, 0,
+					theme_gfx[THEME_WLAN_ACTIVE]->w, 412, 0,
 					theme_gfx[THEME_GECKO_ACTIVE], theme_gfx[THEME_GECKO],
 					false, NULL);
 	widget_image (&v_browser->widgets[3],
 					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w, 412, 0,
-					theme_gfx[THEME_LAN_ACTIVE], theme_gfx[THEME_LAN],
+					theme_gfx[THEME_WLAN_ACTIVE], theme_gfx[THEME_WLAN],
 					false, NULL);
 	widget_image (&v_browser->widgets[4],
 				  0, 416, 0,
@@ -74,7 +74,7 @@ void browser_theme_reinit(void) {
 
 	widget_set_flag (&v_browser->widgets[0], WF_VISIBLE, false);
 	widget_set_flag (&v_browser->widgets[1], WF_VISIBLE, false);
-	
+
 	inited_widgets = true;
 }
 
