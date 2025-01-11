@@ -39,13 +39,12 @@ signkeyfuncs = [ load_rsa_key, load_rsa_key, None ]
 NULL_IV = b"\x00"*16
 
 keylist = [
-    # other keys besides common key unnecessary to build (for now, might add korean key and some others)
     "common-key"
-    #"sd-key",
-    #"sd-iv",
-    #"md5-blanker",
-    #"root-key",
-   # "korean-key",
+    "sd-key",
+    "sd-iv",
+    "md5-blanker",
+    "root-key",
+    "korean-key",
 ]
 
 keys = {}
