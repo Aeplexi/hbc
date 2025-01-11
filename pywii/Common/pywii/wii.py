@@ -39,7 +39,7 @@ signkeyfuncs = [ load_rsa_key, load_rsa_key, None ]
 NULL_IV = b"\x00"*16
 
 keylist = [
-    "common-key"
+    "common-key",
     "sd-key",
     "sd-iv",
     "md5-blanker",
