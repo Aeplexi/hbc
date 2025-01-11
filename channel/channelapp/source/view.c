@@ -25,7 +25,7 @@ u8 *cursor_shade_data;
 u32 cursor_shade_data_size;
 
 static gfx_queue_entry entry_bg;
-static gfx_queue_entry entry_logo;
+// static gfx_queue_entry entry_logo;
 static gfx_queue_entry entry_throbber;
 
 static gfx_entity gradient_subview;
@@ -47,6 +47,8 @@ static gfx_queue_entry *sce = NULL;
 
 bool view_bubbles = false;
 
+bool egg = false;
+
 void view_init (void) {
 	cursor_enabled = false;
 	rumble_enabled = (CONF_GetPadMotorMode() == 0) ? 0 : 1;
@@ -64,7 +66,7 @@ void view_deinit (void) {
 void view_theme_reinit(void) {
 	gfx_qe_entity(&entry_bg, theme_gfx[THEME_BACKGROUND],
 					0, 0, -3, COL_DEFAULT);
-	gfx_qe_entity(&entry_logo, theme_gfx[THEME_LOGO], 0, 416, 0, COL_DEFAULT);
+	// gfx_qe_entity(&entry_logo, theme_gfx[THEME_LOGO], 0, 416, 0, COL_DEFAULT);
 	gfx_qe_entity(&entry_throbber, theme_gfx[THEME_THROBBER],
 					(view_width - theme_gfx[THEME_THROBBER]->w) / 2,
 					(view_height - theme_gfx[THEME_THROBBER]->h) / 2,
@@ -246,7 +248,7 @@ void view_plot (view *v, u32 alpha, u32 *down, u32 *held, u32 *up) {
 	if (view_bubbles)
 		bubble_update(wm, x, y);
 
-	gfx_frame_push (&entry_logo, 1);
+	// gfx_frame_push (&entry_logo, 1);
 
 		if(!viewing) {
 			char sct[20];
@@ -273,7 +275,8 @@ void view_plot (view *v, u32 alpha, u32 *down, u32 *held, u32 *up) {
 	if (wm) {
 		if ((w != -1) && (ct != CUR_DRAG))
 			ct = v->widgets[w].cur;
-
+		if (egg && ct == CUR_STD)
+			ct = CUR_EGG;
 		cursors_queue (cur, ct, x, y, roll);
 
 		gfx_frame_push (cur, 2);

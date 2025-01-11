@@ -9,7 +9,6 @@
 typedef enum {
 	// view.c
 	THEME_BACKGROUND = 0,
-	THEME_LOGO,
 
 	// bubbles.c
 	THEME_BUBBLE1,
@@ -25,6 +24,7 @@ typedef enum {
 	THEME_GECKO_ACTIVE,
 	THEME_LAN,
 	THEME_LAN_ACTIVE,
+	THEME_LOGO,
 	THEME_THROBBER,
 
 	// dialogc.c

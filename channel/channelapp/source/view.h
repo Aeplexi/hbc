@@ -28,6 +28,8 @@ extern bool allow_screenshot;
 extern int score;
 extern int viewing;
 
+extern bool egg;
+
 void view_init ();
 void view_deinit ();
 void view_theme_reinit(void);

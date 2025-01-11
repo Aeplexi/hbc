@@ -6,6 +6,8 @@
 #include "cursor_drag_shade_png.h"
 #include "cursor_pic_png.h"
 #include "cursor_shade_png.h"
+#include "cursor_egg_png.h"
+#include "cursor_egg_shade_png.h"
 
 #include "cursors.h"
 
@@ -27,6 +29,14 @@ void cursors_init (void) {
 												cursor_drag_png_size, 96, 96);
 	cursors[CUR_DRAG].hotspot_x = cursors[CUR_DRAG].tex[1]->w / 2;
 	cursors[CUR_DRAG].hotspot_y = cursors[CUR_DRAG].tex[1]->h / 2;
+
+	cursors[CUR_EGG].tex[0] = tex_from_png (cursor_egg_shade_png,
+											 cursor_egg_shade_png_size,
+										  96, 96);
+	cursors[CUR_EGG].tex[1] = tex_from_png (cursor_egg_png,
+											 cursor_egg_png_size, 96, 96);
+	cursors[CUR_EGG].hotspot_x = cursors[CUR_DRAG].tex[1]->w / 2;
+	cursors[CUR_EGG].hotspot_y = cursors[CUR_DRAG].tex[1]->h / 2;
 }
 
 void cursors_deinit (void) {

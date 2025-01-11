@@ -72,6 +72,10 @@ static const char *text_error_delete;
 
 extern int viewing;
 
+extern bool egg;
+
+u8 egg_counter = 0;
+
 s32 __IOS_LoadStartupIOS(void) {
 #if 0
 	__ES_Init();
@@ -558,6 +562,14 @@ void main_real(void) {
 
 					if (clicked == 3) {
 						loader_tcp_init ();
+						continue;
+					}
+
+					if (clicked == 4) {
+						egg_counter++;
+						if (egg_counter >= 69)
+							egg = true;
+						else
 						continue;
 					}
 

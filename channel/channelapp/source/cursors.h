@@ -9,6 +9,7 @@
 typedef enum {
 	CUR_STD = 0,
 	CUR_DRAG,
+	CUR_EGG,
 
 	CUR_MAX
 } cursor_type;

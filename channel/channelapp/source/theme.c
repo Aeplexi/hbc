@@ -21,7 +21,6 @@
 // view.c
 #include "background_png.h"
 #include "background_wide_png.h"
-#include "logo_png.h"
 // bubbles.c
 #include "bubble1_png.h"
 #include "bubble2_png.h"
@@ -35,6 +34,7 @@
 #include "icon_usbgecko_active_png.h"
 #include "icon_network_png.h"
 #include "icon_network_active_png.h"
+#include "logo_png.h"
 #include "throbber_png.h"
 // dialogs.c
 #include "about_png.h"
@@ -96,7 +96,6 @@ static const struct {
 	const char *filename;
 } theme_data[THEME_LAST] = {
 	ENTRY_WS(background, 640, 480, 852),
-	ENTRY_RO(logo, 320, 64),
 
 	ENTRY(bubble1, 64, 64),
 	ENTRY(bubble2, 64, 64),
@@ -110,6 +109,7 @@ static const struct {
 	ENTRY(icon_usbgecko_active, 32, 32),
 	ENTRY(icon_network, 32, 32),
 	ENTRY(icon_network_active, 32, 32),
+	ENTRY_RO(logo, 320, 64),
 	ENTRY(throbber, 64, 64),
 
 	ENTRY_RO(about, 236, 104),
