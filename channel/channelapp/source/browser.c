@@ -14,7 +14,7 @@
 
 #include "browser.h"
 
-#define AE_OFFSET 4
+#define AE_OFFSET 5
 #define TRANS_STEPS 20
 #define MAX_COLUMNS 4
 #define ROWS 5
@@ -65,6 +65,10 @@ void browser_theme_reinit(void) {
 					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w, 412, 0,
 					theme_gfx[THEME_LAN_ACTIVE], theme_gfx[THEME_LAN],
 					false, NULL);
+	widget_image (&v_browser->widgets[4],
+				  0, 416, 0,
+			   theme_gfx[THEME_LOGO], theme_gfx[THEME_LOGO],
+			   false, NULL);
 	widget_set_flag (&v_browser->widgets[2], WF_ENABLED, false);
 	widget_set_flag (&v_browser->widgets[3], WF_ENABLED, false);
 
