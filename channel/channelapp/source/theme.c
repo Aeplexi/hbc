@@ -32,8 +32,8 @@
 #include "apps_next_hover_png.h"
 #include "icon_usbgecko_png.h"
 #include "icon_usbgecko_active_png.h"
-#include "icon_wired_png.h"
-#include "icon_wired_active_png.h"
+#include "icon_ethernet_png.h"
+#include "icon_ethernet_active_png.h"
 #include "icon_wireless_png.h"
 #include "icon_wireless_active_png.h"
 #include "logo_png.h"
@@ -109,8 +109,8 @@ static const struct {
 	ENTRY(apps_next_hover, 64, 64),
 	ENTRY(icon_usbgecko, 32, 32),
 	ENTRY(icon_usbgecko_active, 32, 32),
-	ENTRY(icon_wired, 32, 32),
-	ENTRY(icon_wired_active, 32, 32),
+	ENTRY(icon_ethernet, 32, 32),
+	ENTRY(icon_ethernet_active, 32, 32),
 	ENTRY(icon_wireless, 32, 32),
 	ENTRY(icon_wireless_active, 32, 32),
 	ENTRY_RO(logo, 320, 64),
