@@ -297,6 +297,7 @@ void main_real(void) {
 	bool reloced;
 	bool ahb_access;
 	bool launch_bootmii;
+    bool launch_priiloader;
 	bool reboot_console;
 
 	u64 frame;
@@ -340,6 +341,7 @@ void main_real(void) {
 	reloced = false;
 	ahb_access = false;
 	launch_bootmii = false;
+	launch_priiloader = false;
 	reboot_console = false;
 
 	frame = 0;
@@ -471,12 +473,14 @@ void main_real(void) {
 					}
 					should_exit = true;
 					break;
-
 				case 3:
+					launch_priiloader = true;
+					should_exit = true;
+				case 4:
 					should_exit = true;
 					continue;
 
-				case 4:
+				case 5:
 					should_exit = true;
 					shutdown = true;
 					break;
@@ -810,6 +814,15 @@ void main_real(void) {
 	if (launch_bootmii) {
 		gprintf ("launching BootMii\n");
 		__IOS_LaunchNewIOS(BOOTMII_IOS);
+	}
+
+	if (launch_priiloader) {
+		gprintf ("launching Priiloader\n");
+		*(vu32 *)0x8132FFFB = 0x4461636F;
+		*(vu32 *)0x817FEFF0 = 0x4461636F;
+		DCFlushRange((void *)0x8132FFFB, 4);
+		DCFlushRange((void *)0x817FEFF0, 4);
+		SYS_ResetSystem(SYS_RETURNTOMENU, 0, 0);
 	}
 
 	if (reloced) {

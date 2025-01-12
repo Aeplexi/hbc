@@ -45,6 +45,7 @@ void memstats(int reset);
 
 #define BOOTMII_IOS 254
 #define TITLEID_BOOTMII (0x0000000100000000LL | BOOTMII_IOS)
+#define TITLEID_SYSMENU 0x0000000100000002LL
 
 #define PREFERRED IOS_GetPreferredVersion()
 #define UNCHANGED IOS_GetVersion()

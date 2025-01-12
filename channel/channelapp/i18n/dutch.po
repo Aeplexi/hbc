@@ -198,16 +198,19 @@ msgstr "Netwerk niet geïnitialiseerd"
 
 #: source/m_main.c:81
 #, c-format
-msgid "Your Wii's IP is %u.%u.%u.%u"
-msgstr "IP adres: %u.%u.%u.%u"
+msgid "Your Wii's IP is:"
+msgstr "IP adres:"
 
 #: source/m_main.c:97
 msgid "About"
 msgstr "Info"
 
 #: source/m_main.c:102
-msgid "Launch BootMii"
-msgstr "BootMii starten"
+msgid "Launch BootMii IOS"
+msgstr "BootMii IOS starten"
+
+msgid "Launch Priiloader"
+msgstr "Priiloader starten"
 
 #: source/m_main.c:106
 msgid "Exit to System Menu"

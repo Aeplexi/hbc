@@ -203,8 +203,8 @@ msgstr "Rete non inizializzata"
 
 #: source/m_main.c:81
 #, c-format
-msgid "Your Wii's IP is %u.%u.%u.%u"
-msgstr "L'indirizzo IP del Wii è %u.%u.%u.%u"
+msgid "Your Wii's IP is:"
+msgstr "L'indirizzo IP del Wii è:"
 
 # button text
 #: source/m_main.c:97
@@ -212,8 +212,11 @@ msgid "About"
 msgstr "Informazioni"
 
 #: source/m_main.c:102
-msgid "Launch BootMii"
-msgstr "Lanciare BootMii"
+msgid "Launch BootMii IOS"
+msgstr "Lanciare BootMii IOS"
+
+msgid "Launch Priiloader"
+msgstr "Lanciare Priiloader"
 
 #: source/m_main.c:106
 msgid "Exit to System Menu"
