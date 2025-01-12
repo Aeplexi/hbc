@@ -1,12 +1,6 @@
 #include <stdbool.h>
 #include <ogc/ios.h>
-#include <stdbool.h>
-#include <gctypes.h>
 #include <ogc/ipc.h>
-#include <ogcsys.h>
-#include <malloc.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "title.h"
 // can remove some of those includes i think

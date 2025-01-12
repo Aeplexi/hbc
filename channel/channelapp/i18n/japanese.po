@@ -201,8 +201,8 @@ msgstr "ネットワークが初期化されていません。"
 
 #: source/m_main.c:81
 #, c-format
-msgid "Your Wii's IP is %u.%u.%u.%u"
-msgstr "このWiiのIPアドレスは %u.%u.%u.%u"
+msgid "Your Wii's IP is:"
+msgstr "このWiiのIPアドレスは次のとおりです。"
 
 # button text
 #: source/m_main.c:97
@@ -210,8 +210,11 @@ msgid "About"
 msgstr "このアプリケーションについて"
 
 #: source/m_main.c:102
-msgid "Launch BootMii"
-msgstr "BootMiiを起動"
+msgid "Launch BootMii IOS"
+msgstr "BootMii IOSを起動"
+
+msgid "Launch Priiloader"
+msgstr "Priiloaderを起動"
 
 #: source/m_main.c:106
 msgid "Exit to System Menu"

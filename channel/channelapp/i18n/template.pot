@@ -199,7 +199,7 @@ msgstr ""
 
 #: source/m_main.c:81
 #, c-format
-msgid "Your Wii's IP is %u.%u.%u.%u"
+msgid "Your Wii's IP is:"
 msgstr ""
 
 # button text
@@ -208,7 +208,10 @@ msgid "About"
 msgstr ""
 
 #: source/m_main.c:102
-msgid "Launch BootMii"
+msgid "Launch BootMii IOS"
+msgstr ""
+
+msgid "Launch Priiloader"
 msgstr ""
 
 #: source/m_main.c:106
