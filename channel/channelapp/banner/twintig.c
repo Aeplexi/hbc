@@ -31,13 +31,20 @@ static int read_image(u8 *data, u32 w, u32 h, const char *name) {
 	FILE *fp;
 	u32 x, y;
 	u32 ww, hh;
+	char str[17];
 
 	fp = fopen(name, "rb");
 	if (!fp)
 		return -1;
 
-	if (fscanf(fp, "P6 %d %d 255\n", &ww, &hh) != 2)
-		ERROR("bad ppm");
+	if (fscanf(fp, "P6 %d %d 255\n", &ww, &hh) != 2) {
+		fgets(str, 17, fp);
+		if (strcmp(str, "# Created by GIMP")) {
+			ERROR("\"Created by GIMP\" comment detected in ppm");
+		} else {
+			ERROR("bad ppm");
+		}
+	}
 	if (ww != w || hh != h)
 		ERROR("wrong size ppm");
 
