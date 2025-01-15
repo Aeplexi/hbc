@@ -669,9 +669,9 @@ void main_real(void) {
 				continue;
 			}
 
-			widget_scroll_memo_deco (&v_detail->widgets[5], mm);
+			widget_scroll_memo_deco (&v_detail->widgets[6], mm);
 
-			if ((bd & PADS_A) && v_detail->focus == 10) {
+			if ((bd & PADS_A) && v_detail->focus == 11) {
 				dialog_fade (v_current, false);
 
 				v_current = v_browser;
@@ -681,7 +681,7 @@ void main_real(void) {
 				continue;
 			}
 
-			if ((bd & PADS_A) && v_detail->focus == 8) {
+			if ((bd & PADS_A) && v_detail->focus == 9) {
 				dialog_fade (v_current, false);
 
 				v_current = v_browser;
@@ -705,7 +705,7 @@ void main_real(void) {
 				continue;
 			}
 
-			if ((bd & PADS_A) && v_detail->focus == 9) {
+			if ((bd & PADS_A) && v_detail->focus == 10) {
 				dialog_fade (v_current, false);
 
 				v_current = v_browser;
@@ -764,7 +764,7 @@ void main_real(void) {
 			}
 
 			if ((frame > 60 * 2) && (frame % 3) == 0)
-				widget_scroll_memo (&v_current->widgets[2], -1);
+				widget_scroll_memo (&v_current->widgets[3], -1);
 		}
 	}
 

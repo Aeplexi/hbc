@@ -13,7 +13,7 @@ typedef struct {
 	char *name;
 	char *coder;
 	char *version;
-	time_t release_date;
+	char *release_date;
 	char *short_description;
 	char *long_description;
 	char *args;
