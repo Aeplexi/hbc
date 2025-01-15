@@ -28,6 +28,8 @@ static bool bootmii_ios = false;
 static bool vwii = false;
 static bool priiloader = false;
 
+int menu_index;
+
 static bool bootmii_is_installed(u64 title_id) {
 	u32 tmd_view_size;
 	u8 *tmdbuf;
