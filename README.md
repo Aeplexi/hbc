@@ -1,8 +1,4 @@
 # The Homebrew Channel
-# This entire README needs a rewrite!
-
-This repository contains the public release of the source code for
-The Homebrew Channel.
 
 Included portions:
 
@@ -16,19 +12,15 @@ Not included:
 
 * Installer
 
-Note that the code in this repository differs from the source code used to build
-the official version of The Homebrew Channel, which includes additional
-protection features (i.e. we had to add reverse-DRM to stop scammers from
-selling it).
-
 This has been tested on a real Wii, a Wii mini, and a vWii (Wii U).
 
 ## Build instructions
 
 You need devkitPPC and libogc installed, and the DEVKITPRO/DEVKITPPC environment
-variables correctly set. Use the latest available versions. Make sure you have
-libogc/libfat, and also install the following 3rd party libraries:
+variables correctly set. Use the latest available versions. Make sure you also install these libraries:
 
+* libogc
+* libfat
 * zlib
 * libpng
 * mxml
@@ -37,7 +29,7 @@ libogc/libfat, and also install the following 3rd party libraries:
 You can obtain binaries of those with
 [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman). Simply use
 
-    sudo (dkp-)pacman -S ppc-zlib ppc-libpng ppc-mxml ppc-freetype
+    sudo (dkp-)pacman -S ppc-zlib ppc-libpng ppc-mxml ppc-freetype wii-dev
 
 Additionally, you'll need the following packages on your host machine:
 

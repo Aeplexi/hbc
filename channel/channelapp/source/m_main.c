@@ -177,7 +177,7 @@ char* get_system_menu_version_string(u16 number) {
 		}
 	}
 
-	return "Unknown version"; // no system menu version installed, or weird patched one?
+	return "Unknown"; // no system menu version installed, or weird patched one?
 }
 
 static u16 get_tmd_version(u64 title) {
