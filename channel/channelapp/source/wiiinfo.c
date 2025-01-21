@@ -1,9 +1,6 @@
-#include <stdbool.h>
-#include <ogc/ios.h>
 #include <ogc/ipc.h>
 
 #include "title.h"
-// can remove some of those includes i think
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static int dolphin_fd = ~0;
