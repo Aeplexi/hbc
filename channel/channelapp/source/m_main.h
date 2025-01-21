@@ -5,14 +5,14 @@
 
 #include "view.h"
 
-typedef enum {
+enum menuindex {
 	HOME = 0,
 	OPTIONS_1,
 	OPTIONS_2,
-	EXIT
-} menuindex;
+	EXIT,
+};
 
-extern int menu_index;
+extern enum menuindex menu_index;
 
 view * m_main_init (void);
 void m_main_deinit (void);
