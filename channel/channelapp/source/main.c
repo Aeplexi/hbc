@@ -70,7 +70,10 @@ static bool gdb;
 static const char *text_delete;
 static const char *text_error_delete;
 
-extern int viewing;
+extern enum menuindex menu_index;
+extern enum menuindex parent_menu;
+
+extern bool viewing;
 
 extern bool egg;
 
@@ -417,8 +420,10 @@ void main_real(void) {
 		}
 
 		if ((bd & PADS_HOME) && viewing) {
-			if (v_current == v_browser) {
-				m_main_update ();
+			if (v_current == v_browser) {\
+				menu_index = MENU_HOME;
+				m_main_theme_reinit();
+				m_main_update();
 				v_current = v_m_main;
 				view_set_focus (v_m_main, 0);
 
@@ -433,8 +438,13 @@ void main_real(void) {
 
 		if ((v_current == v_m_main) && viewing) {
 			if (bd & PADS_B) {
-				v_current = v_browser;
-
+				if (menu_index == MENU_HOME) {
+					v_current = v_browser;
+				} else {
+					menu_index = parent_menu;
+					m_main_theme_reinit();
+					m_main_update();
+				}
 				continue;
 			}
 
@@ -445,49 +455,55 @@ void main_real(void) {
 				view_set_focus_next (v_current);
 
 			if (bd & PADS_A) {
-				switch (v_m_main->focus) {
-				case 0:
-					v_current = v_browser;
-					continue;
+				if (menu_index == MENU_HOME) {
+					switch (v_m_main->focus) {
+					// case 0:
 
-				case 1:
-					v_about = dialog_about (v_m_main);
-					v_current = v_about;
+					// case 1:
 
-					view_enable_cursor (false);
+					case 2:
+						v_about = dialog_about (v_m_main);
+						v_current = v_about;
 
-					dialog_fade (v_current, true);
+						view_enable_cursor (false);
 
-					exit_about = false;
+						dialog_fade (v_current, true);
 
-					continue;
-				// either launch bootmii or reboot the console, depending on if a vwii is detected
-				case 2:
-					if (is_vwii())
-					{
-						reboot_console = true;
-						should_exit = true;
+						exit_about = false;
+
+						continue;
+					// either launch bootmii or reboot the console, depending on if a vwii is detected
+					case 3:
+						menu_index = MENU_EXIT;
+						m_main_theme_reinit();
+						m_main_update();
+						continue;
 					}
-					else {
-						launch_bootmii = true;
+				} else if (menu_index == MENU_EXIT) {
+					switch (v_m_main->focus) {
+						case 0:
+							launch_bootmii = true;
+							should_exit = true;
+							break;
+						case 1:
+							launch_priiloader = true;
+							should_exit = true;
+						case 2:
+							should_exit = true;
+							continue;
+						case 3:
+							reboot_console = true;
+							should_exit = true;
+							break;
+						case 4:
+							should_exit = true;
+							shutdown = true;
+							break;
 					}
-					should_exit = true;
-					break;
-				case 3:
-					launch_priiloader = true;
-					should_exit = true;
-				case 4:
-					should_exit = true;
-					continue;
-
-				case 5:
-					should_exit = true;
-					shutdown = true;
-					break;
-				}
 			}
 
 			continue;
+			}
 		}
 
 		if (v_current == v_browser) {

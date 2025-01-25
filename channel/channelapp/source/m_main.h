@@ -6,13 +6,14 @@
 #include "view.h"
 
 enum menuindex {
-	HOME = 0,
-	OPTIONS_1,
-	OPTIONS_2,
-	EXIT,
+	MENU_HOME = 0,
+	MENU_OPTIONS_1,
+	MENU_OPTIONS_2,
+	MENU_EXIT,
 };
 
 extern enum menuindex menu_index;
+extern enum menuindex parent_menu;
 
 view * m_main_init (void);
 void m_main_deinit (void);

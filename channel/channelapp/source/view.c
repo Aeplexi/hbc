@@ -42,7 +42,7 @@ static s8 rumble_timeout = -RUMBLE_DELAY;
 int score = 0;
 static int fading = 0;
 
-int viewing = 1;
+bool viewing = true;
 static gfx_queue_entry *sce = NULL;
 
 bool view_bubbles = false;

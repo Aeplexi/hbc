@@ -26,7 +26,7 @@ typedef struct _view {
 extern bool view_bubbles;
 extern bool allow_screenshot;
 extern int score;
-extern int viewing;
+extern bool viewing;
 
 extern bool egg;
 

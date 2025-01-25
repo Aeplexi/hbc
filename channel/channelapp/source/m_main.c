@@ -28,8 +28,8 @@ static bool bootmii_ios = false;
 static bool vwii = false;
 static bool priiloader = false;
 
-enum menuindex menu_index = EXIT;
-enum menuindex parent_menu = HOME;
+enum menuindex menu_index = MENU_HOME;
+enum menuindex parent_menu = MENU_HOME;
 
 static bool bootmii_is_installed(u64 title_id) {
 	u32 tmd_view_size;
@@ -224,7 +224,7 @@ void m_main_deinit(void) {
 }
 
 void m_main_theme_reinit(void) {
-	u16 x, y, yadd;
+	u16 x, y = 0, yadd = 0;
 	int i;
 	char bufferwiinote[55];
 	char buffer[50];
@@ -241,7 +241,10 @@ void m_main_theme_reinit(void) {
 	switch (menu_index) {
 		// it's only theoretically possible for one of these to be true: the user is running on a vWii or they have BootMii IOS installed.
 
-		case HOME:
+		case MENU_HOME:
+			parent_menu = MENU_HOME;
+
+			y = 80;
 			if (bootmii_ios || vwii)
 				if (priiloader)
 					yadd = 8;
@@ -251,58 +254,62 @@ void m_main_theme_reinit(void) {
 				yadd = 16;
 			else
 				yadd = 32;
-			parent_menu = HOME;
-			y = 80;
 			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 						   _("Options"));
 			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
 			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+						   _("System Info"));
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
 						   _("About"));
 			y += theme_gfx[THEME_BUTTON]->h + yadd;
 
+			widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
+						   _("Exit"));
+			break;
+		case MENU_EXIT:
+			parent_menu = MENU_HOME;
+
+			y = 80;
+			if (bootmii_ios || vwii) {
+				if (priiloader) {
+					yadd = 8;
+				} else {
+				 yadd = 16;
+				}
+			} else if (priiloader) {
+				yadd = 16;
+			} else {
+				yadd = 32;
+			}
 			if (bootmii_ios) {
-				widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-							_("Launch BootMii IOS"));
+				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+							   _("Launch BootMii IOS"));
 				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			}
 
 			if (priiloader) {
-				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							_("Launch Priiloader"));
+				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+							   _("Launch Priiloader"));
 				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			}
 
-			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
-						   _("Exit"));
-			break;
-		case EXIT:
-			parent_menu = HOME;
-			if (vwii) {
-				y = 80 + theme_gfx[THEME_BUTTON]->h + yadd;
-				yadd = 32;
-			} else {
-				y = 80 + (theme_gfx[THEME_BUTTON]->h + yadd) / 2;
-				yadd = 16;
-			}
-			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
 						   _("Exit to System Menu"));
 			y += theme_gfx[THEME_BUTTON]->h + yadd;
 
 			if (vwii) {
-				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
 							   _("Return to Wii U Menu"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			} else {
-				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
 							   _("Reboot"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-				widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-							   _("Standby"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			}
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
 
-			widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
+			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
 						   _("Power Off"));
 			break;
 	}
