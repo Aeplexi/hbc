@@ -282,11 +282,8 @@ meta_info *meta_parse(char *fn) {
 	res->version = _xmldup(_get_elem_cdata(node, "version"));
 	res->short_description = _xmldup(_get_elem_cdata(node, "short_description"));
 	res->long_description = _xmldup(_get_elem_cdata(node, "long_description"));
-	res->release_date = _xmldup(_get_elem_cdata(node, "release_date"));
 
-	// better release date system maybe
-
-	/*s = _get_elem_cdata(node, "release_date");
+	s = _get_elem_cdata(node, "release_date");
 
 	if (s) {
 		memset(&t, 0, sizeof(struct tm));
@@ -304,8 +301,6 @@ meta_info *meta_parse(char *fn) {
 			res->release_date = mktime (&t);
 		}
 	}
-
-	*/
 
 	res->args = _get_args(&res->argslen, node, "arguments");
 

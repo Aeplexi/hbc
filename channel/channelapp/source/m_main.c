@@ -14,6 +14,8 @@
 #include "m_main.h"
 #include "title.h"
 #include "wiiinfo.h"
+#include "nand.h"
+#include "fileops.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
@@ -59,51 +61,75 @@ static bool bootmii_is_installed(u64 title_id) {
 	return ret;
 }
 
-static bool priiloader_is_installed(u64 title_id) {
+static u32 GetSysMenuBootContent(void)
+{
+    s32 ret;
+    u32 cid = 0;
+    u32 size = 0;
+    signed_blob *s_tmd = NULL;
 
-	u32 tmd_size;
-	static u8 tmd_buf[MAX_SIGNED_TMD_SIZE] ATTRIBUTE_ALIGN(32);
-	static signed_blob *mTMD;
-	static tmd *rTMD;
-	char TMD_Path[ISFS_MAXPATH];
-	char TMD_Path2[ISFS_MAXPATH];
+    ret = ES_GetStoredTMDSize(0x100000002LL, &size);
+    if (!size)
+    {
+        printf("Error! ES_GetStoredTMDSize failed (ret=%i)\n", ret);
+        return 0;
+    }
 
-	//IOS Shit Done
-	//read TMD so we can get the main booting dol
-	s32 fd = 0;
-	u32 id = 0;
-	bool ret = false;
-	memset(TMD_Path,0,64);
-	memset(TMD_Path2,0,64);
-	sprintf(TMD_Path, "/title/%08x/%08x/content/title.tmd",TITLE_UPPER(title_id),TITLE_LOWER(title_id));
-	sprintf(TMD_Path2, "/title/%08x/%08x/content/title_or.tmd",TITLE_UPPER(title_id),TITLE_LOWER(title_id));
-	fd = ES_GetStoredTMDSize(title_id,&tmd_size);
-	if (fd < 0)
-	{
-		gprintf("Unable to get stored tmd size");
-	}
-	mTMD = (signed_blob *)tmd_buf;
-	fd = ES_GetStoredTMD(title_id,mTMD,tmd_size);
-	if (fd < 0)
-	{
-		gprintf("Unable to get stored tmd");
-	}
-	rTMD = (tmd*)SIGNATURE_PAYLOAD(mTMD);
-	for(u8 i=0; i < rTMD->num_contents; ++i)
-	{
-		if (rTMD->contents[i].index == rTMD->boot_index)
-		{
-			id = rTMD->contents[i].cid;
-			break;
-		}
-	}
-	if (id == 0)
-	{
-		gprintf("Unable to retrieve title booting app");
-	}
+    s_tmd = memalign(32, size);
+    if (!s_tmd)
+    {
+        printf("Error! Memory allocation failed!\n");
+        return 0;
+    }
 
-	ret = id;
-	return ret;
+    ret = ES_GetStoredTMD(0x100000002LL, s_tmd, size);
+    if (ret < 0)
+    {
+        printf("Error! ES_GetStoredTMD failed (ret=%i)\n", ret);
+        free(s_tmd);
+        return 0;
+    }
+
+    tmd *p_tmd = SIGNATURE_PAYLOAD(s_tmd);
+
+    for (int i = 0; i < p_tmd->num_contents; i++)
+    {
+        tmd_content* content = &p_tmd->contents[i];
+        if (content->index == p_tmd->boot_index)
+        {
+            cid = content->cid;
+            break;
+        }
+    }
+
+    free(s_tmd);
+    if (!cid) printf("Error! Cannot find system menu boot content!\n");
+
+    return cid;
+}
+
+bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL)
+{
+    u32 cid = GetSysMenuBootContent();
+    if (!cid) return false;
+
+    if (mainDOL) cid |= 0x10000000;
+    sprintf(path, "/title/00000001/00000002/content/%08x.app", cid);
+
+    return true;
+}
+
+bool priiloader_is_installed()
+{
+    char path[ISFS_MAXPATH] ATTRIBUTE_ALIGN(0x20);
+
+    if (!GetSysMenuExecPath(path, true))
+        return false;
+
+    u32 size = 0;
+    NANDGetFileSize(path, &size);
+
+    return (size > 0);
 }
 
 // todo: move to diff file!
