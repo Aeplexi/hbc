@@ -2,9 +2,9 @@ name: Build HBC
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "**" ]
 
 jobs:
   build:
@@ -31,4 +31,16 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: "channel/title/channel_retail.wad"
-        name: The Homebrew Channel
+        name: The Homebrew Channel (WAD, LULZ)
+    - name: Publish ELF
+      uses: actions/upload-artifact@v4
+      with:
+        path: "channel/channelapp/channelapp-channel.elf"
+        name: The Homebrew Channel (ELF, LULZ)
+    - name: Publish DOL
+      uses: actions/upload-artifact@v4
+      with:
+        path: "channel/channelapp/channelapp-channel.dol"
+        name: The Homebrew Channel (DOL, LULZ)
+
+      

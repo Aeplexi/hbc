@@ -1,4 +1,5 @@
 # The Homebrew Channel
+[![Build HBC](https://github.com/Aeplexi/hbc/actions/workflows/build.yml/badge.svg)](https://github.com/Aeplexi/hbc/actions/workflows/build.yml)
 
 Included portions:
 
