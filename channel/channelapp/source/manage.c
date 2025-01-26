@@ -210,10 +210,10 @@ bool manage_check_zip_app(u8 *data, u32 data_len, char *dirname, u32 *bytes) {
 				}
 			}
 
-			if (!strcasecmp(filename + strlen(dirname), app_fn_boot_elf))
-				got_elf = 1;
-			else if (!strcasecmp(filename + strlen(dirname), app_fn_boot_dol))
+			if (!strcasecmp(filename + strlen(dirname), app_fn_boot_dol))
 				got_dol = 1;
+			else if (!strcasecmp(filename + strlen(dirname), app_fn_boot_elf))
+				got_elf = 1;
 			else if (!strcasecmp(filename + strlen(dirname), app_fn_theme))
 				got_theme = 1;
 		}
@@ -227,7 +227,7 @@ bool manage_check_zip_app(u8 *data, u32 data_len, char *dirname, u32 *bytes) {
 		}
 	}
 
-	if (strlen(dirname) && ((got_elf + got_dol + got_theme) == 1)) {
+	if (strlen(dirname) && (((got_elf || got_dol) + got_theme) == 1)) {
 		ret = true;
 		dirname[strlen(dirname) - 1] = 0;
 	}
