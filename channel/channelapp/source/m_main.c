@@ -223,8 +223,12 @@ void m_main_deinit(void) {
 	v_m_main = NULL;
 }
 
+int button_y_offset(int y, int multiplier) {
+	return y + theme_gfx[THEME_BUTTON]->h * multiplier / 2;
+}
+
 void m_main_theme_reinit(void) {
-	u16 x, y = 0, yadd = 0;
+	u16 x, y = 0, yadd = 0, extra_buttons = 0;
 	int i;
 	char bufferwiinote[55];
 	char buffer[50];
@@ -244,16 +248,8 @@ void m_main_theme_reinit(void) {
 		case MENU_HOME:
 			parent_menu = MENU_HOME;
 
-			y = 80;
-			if (bootmii_ios || vwii)
-				if (priiloader)
-					yadd = 8;
-			else
-				yadd = 16;
-			else if (priiloader)
-				yadd = 16;
-			else
-				yadd = 32;
+			yadd = 32;
+			y = button_y_offset(80, 1);
 			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 						   _("Options"));
 			y += theme_gfx[THEME_BUTTON]->h + yadd;
@@ -272,18 +268,9 @@ void m_main_theme_reinit(void) {
 		case MENU_EXIT:
 			parent_menu = MENU_HOME;
 
-			y = 80;
-			if (bootmii_ios || vwii) {
-				if (priiloader) {
-					yadd = 8;
-				} else {
-				 yadd = 16;
-				}
-			} else if (priiloader) {
-				yadd = 16;
-			} else {
-				yadd = 32;
-			}
+			yadd = 32;
+			extra_buttons = bootmii_ios + vwii + priiloader;
+			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h) / 2 * extra_buttons;
 			if (bootmii_ios) {
 				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 							   _("Launch BootMii IOS"));
@@ -302,7 +289,7 @@ void m_main_theme_reinit(void) {
 
 			if (vwii) {
 				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							   _("Return to Wii U Menu"));
+							   _("Reboot to Wii U Menu"));
 			} else {
 				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
 							   _("Reboot"));
