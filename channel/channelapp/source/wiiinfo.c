@@ -1,6 +1,8 @@
 #include <ogc/ipc.h>
+#include <gccore.h>
 
 #include "title.h"
+#include "string.h"
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static int dolphin_fd = ~0;
@@ -16,10 +18,23 @@ bool is_dolphin() {
 	return dolphin_fd > 0;
 }
 
+char* get_serial(char* code) {
+	char serno[10];
+	s32 ret;
+	ret = __CONF_GetTxt("CODE", code, 4);
+	if (ret < 0)
+		return "err";
+	ret = __CONF_GetTxt("SERNO", serno, 10);
+	if (ret < 0)
+		return "err";
+	strcat(code, serno);
+	return code;
+}
+
 int check_setting() {
 	char code[4];
 	char model[13];
-	char ret;
+	s32 ret;
 
 	ret = __CONF_GetTxt("CODE", code, 4);
 	if (ret < 0)

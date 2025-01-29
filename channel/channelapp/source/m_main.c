@@ -292,9 +292,9 @@ void m_main_theme_reinit(void) {
 		case MENU_EXIT:
 			parent_menu = MENU_HOME;
 
-			yadd = 32;
+			yadd = 32 * 2 / 5 ^ (extra_buttons);
 			extra_buttons = bootmii_ios + vwii + priiloader;
-			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + yadd / 2;
+			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + 24;
 			if (bootmii_ios) {
 				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 							   _("Launch BootMii IOS"));
