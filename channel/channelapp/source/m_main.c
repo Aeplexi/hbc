@@ -206,7 +206,7 @@ char* get_system_menu_version_string(u16 number) {
 	return "Unknown"; // no system menu version installed, or weird patched one?
 }
 
-static u16 get_tmd_version(u64 title) {
+u16 get_tmd_version(u64 title) {
 	STACK_ALIGN(u8, tmdbuf, 1024, 32);
 	u32 tmd_view_size = 0;
 	s32 res;

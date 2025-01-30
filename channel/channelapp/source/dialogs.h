@@ -10,7 +10,8 @@ typedef enum {
 	DLGMT_INFO = 0,
 	DLGMT_CONFIRM,
 	DLGMT_WARNING,
-	DLGMT_ERROR
+	DLGMT_ERROR,
+	DLGMT_SYSINFO
 } dialog_message_type;
 
 typedef enum {

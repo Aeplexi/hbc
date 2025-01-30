@@ -26,6 +26,7 @@ static const char *caption_info;
 static const char *caption_confirm;
 static const char *caption_warning;
 static const char *caption_error;
+static const char *caption_sysinfo;
 static const char *caption_ok;
 static const char *caption_cancel;
 static const char *caption_yes;
@@ -49,6 +50,8 @@ static const char *string_about_trans;
 static const char *string_about_theme;
 static char *string_about_gen;
 
+static const char *string_sysinfo;
+
 void dialogs_theme_reinit (void) {
 	app_entry_desc_default = _("no description available");
 
@@ -56,6 +59,7 @@ void dialogs_theme_reinit (void) {
 	caption_confirm = _("Confirmation");
 	caption_warning = _("Warning");
 	caption_error = _("Error");
+	caption_sysinfo = _("System Info");
 	caption_ok = _("Ok");
 	caption_cancel = _("Cancel");
 	caption_yes = _("Yes");
@@ -345,26 +349,31 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 					NULL, false, NULL);
 
 	switch (type) {
-	case DLGMT_INFO:
-		caption = caption_info;
-		icon = theme_gfx[THEME_DLG_INFO];
-		break;
+		case DLGMT_INFO:
+			caption = caption_info;
+			icon = theme_gfx[THEME_DLG_INFO];
+			break;
 
-	case DLGMT_CONFIRM:
-		caption = caption_confirm;
-		icon = theme_gfx[THEME_DLG_CONFIRM];
-		break;
+		case DLGMT_CONFIRM:
+			caption = caption_confirm;
+			icon = theme_gfx[THEME_DLG_CONFIRM];
+			break;
 
-	case DLGMT_WARNING:
-		caption = caption_warning;
-		icon = theme_gfx[THEME_DLG_WARNING];
-		break;
+		case DLGMT_WARNING:
+			caption = caption_warning;
+			icon = theme_gfx[THEME_DLG_WARNING];
+			break;
 
-	case DLGMT_ERROR:
-		caption = caption_error;
-		icon = theme_gfx[THEME_DLG_ERROR];
-		break;
-	}
+		case DLGMT_ERROR:
+			caption = caption_error;
+			icon = theme_gfx[THEME_DLG_ERROR];
+			break;
+
+		case DLGMT_SYSINFO:
+			caption = caption_sysinfo;
+			icon = theme_gfx[THEME_DLG_INFO];
+			break;
+	};
 
 	widget_image (&v->widgets[1], 128, 24, 0, icon, NULL, false, NULL);
 	widget_label (&v->widgets[2], 32, 32, 1, caption,

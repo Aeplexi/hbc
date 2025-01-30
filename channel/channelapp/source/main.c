@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <locale.h>
 #include <ctype.h>
+#include <network.h>
 
 #include <ogcsys.h>
 #include <ogc/machine/processor.h>
@@ -38,6 +39,7 @@
 #include "manage.h"
 #include "xml.h"
 #include "title.h"
+#include "wiiinfo.h"
 
 // Languages
 #include "spanish_mo.h"
@@ -59,8 +61,9 @@ extern const u8 stub_bin[];
 extern const u8 stub_bin_end;
 extern const u32 stub_bin_size;
 
-u64 *conf_magic = STUB_ADDR_MAGIC;
-u64 *conf_title_id = STUB_ADDR_TITLE;
+static u64 *conf_magic = STUB_ADDR_MAGIC;
+// static u64 *conf_title_id = STUB_ADDR_TITLE;
+static u32 ip;
 
 static bool should_exit;
 static bool shutdown;
@@ -69,6 +72,7 @@ static bool gdb;
 #endif
 static const char *text_delete;
 static const char *text_error_delete;
+static const char *string_sysinfo;
 
 extern enum menuindex menu_index;
 extern enum menuindex parent_menu;
@@ -253,10 +257,20 @@ static void main_pre(void) {
 	dialogs_init();
 }
 
-static void load_text(void)
-{
+static void load_text(void) {
 	text_delete = _("Do you really want to delete this application?");
 	text_error_delete = _("Error deleting '%s'");
+	string_sysinfo =
+		"Serial No: %s\n"
+		"Console Model: %s\n"
+		"Console Region: %s\n"
+		"CPU: %s\n"
+		"Drive Date: %s\n"
+		"Current Network: %s\n"
+		"IP Address: %u.%u.%u.%u\n"
+		"System Menu: %s\n"
+		"Is Priiloader Installed: %s\n"
+		"Is BootMii IOS installed: %s";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -307,6 +321,8 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
+	char sysinfo_buf[500];
+	char code[14];
 
 	load_text();
 
@@ -357,6 +373,9 @@ void main_real(void) {
 	view_fade(v_current, TEX_LAYER_CURSOR + 1, 0xff, 0xff, 0xff, 0xff, 31, -8);
 
 	view_enable_cursor (true);
+
+	u16 system_menu_tmd_version = get_tmd_version(0x0000000100000002ll);
+	char* system_menu_version_string = get_system_menu_version_string(system_menu_tmd_version);
 
 	while (!should_exit) {
 #ifdef GDBSTUB
@@ -457,9 +476,25 @@ void main_real(void) {
 			if (bd & PADS_A) {
 				if (menu_index == MENU_HOME) {
 					switch (v_m_main->focus) {
-					// case 0:
+					case 0:
+						show_message(v_current, DLGMT_ERROR, DLGB_OK,
+									 "unimplemented", 1);
+						continue;
 
-					// case 1:
+					case 1:
+						get_serial(code);
+						if (loader_tcp_initialized()) {
+							ip = net_gethostip();
+						} else {
+							ip = 0;
+						}
+						sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
+								"Unimplemented", "Unimplemented", "Unimplemented",
+								"Unimplemented", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
+								(ip >> 8) & 0xff, ip & 0xff, system_menu_version_string, "Unimplemented", "Unimplemented", "Unimplemented");
+						show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
+									  sysinfo_buf, 1);
+						continue;
 
 					case 2:
 						v_about = dialog_about (v_m_main);
@@ -472,7 +507,7 @@ void main_real(void) {
 						exit_about = false;
 
 						continue;
-					// either launch bootmii or reboot the console, depending on if a vwii is detected
+
 					case 3:
 						menu_index = MENU_EXIT;
 						m_main_theme_reinit();
