@@ -484,6 +484,7 @@ void main_real(void) {
 					case 1:
 						get_serial(code);
 						if (loader_tcp_initialized()) {
+
 							ip = net_gethostip();
 						} else {
 							ip = 0;

@@ -5,9 +5,11 @@
 #include "string.h"
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
+static const char* netConfig [[gnu::aligned(0x20)]] = "/shared2/sys/net/02/config.dat";
+static u8 netBuffer[7004] [[gnu::aligned(0x20)]];
 static int dolphin_fd = ~0;
 extern int __CONF_GetTxt(const char *name, char *buf, int length);
-
+// int connection1_selectpos = 8, connection2_selectpos = 8+2332, connection3_selectpos = 8+2332+2332;
 // thanks Naim2000/thepikachugamer for this method of detecting dolphin
 bool is_dolphin() {
 	if (!~dolphin_fd) {
@@ -16,6 +18,17 @@ bool is_dolphin() {
 			IOS_Close(dolphin_fd);
 	}
 	return dolphin_fd > 0;
+}
+
+s32 check_network() {
+	int fd;
+	int ret;
+	fd = IOS_Open( netConfig, 1);
+	if (fd < 0) return fd;
+
+	ret = IOS_Read(fd, netBuffer, 7004);
+	IOS_Close(fd);
+	return ret;
 }
 
 char* get_serial(char* code) {

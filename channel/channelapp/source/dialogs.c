@@ -384,10 +384,12 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 	yb = theme_gfx[THEME_DIALOG]->h - theme_gfx[THEME_BUTTON_SMALL]->h - 32;
 	ym = 32 + hf + 8;
 	hm = yb - ym - 8;
-
-	widget_memo_deco (&v->widgets[3], 32, ym, 1,
-						theme_gfx[THEME_DIALOG]->w - 64, hm, text, FA_CENTERED);
-
+	if (type == DLGMT_SYSINFO)
+		widget_memo_deco (&v->widgets[3], 32, ym, 1,
+						  theme_gfx[THEME_DIALOG]->w - 64, hm, text, FA_LEFT);
+	else
+		widget_memo_deco (&v->widgets[3], 32, ym, 1,
+						  theme_gfx[THEME_DIALOG]->w - 64, hm, text, FA_CENTERED);
 	switch (buttons) {
 	case DLGB_OK:
 		b1 = caption_ok;
