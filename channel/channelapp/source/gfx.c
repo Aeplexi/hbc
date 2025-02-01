@@ -12,7 +12,7 @@
 #include "../config.h"
 #include "gfx.h"
 #include "panic.h"
-#include "title.h"
+#include "wiiinfo.h"
 
 #define DEFAULT_FIFO_SIZE (256 * 1024)
 #define CLIPPING_X (view_width / 2 + 64)
@@ -55,7 +55,7 @@ void gfx_init_video (void) {
 
 		widescreen = true;
 
-		if (is_vwii()) {
+		if (IS_VWII) {
 			// poke DMCU to turn off pillarboxing
 			write32(0xd8006a0, 0x30000004);
 			mask32(0xd8006a8, 0, 2);
@@ -68,7 +68,7 @@ void gfx_init_video (void) {
 
 		vmode->viWidth = 672;
 
-		if (is_vwii()) {
+		if (IS_VWII) {
 			// poke DMCU to turn on pillarboxing
 			write32(0xd8006a0, 0x10000002);
 			mask32(0xd8006a8, 0, 2);

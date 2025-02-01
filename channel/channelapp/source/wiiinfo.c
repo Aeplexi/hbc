@@ -1,6 +1,6 @@
 #include <ogc/ipc.h>
 
-#include "title.h"
+#include "wiiinfo.h"
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static int dolphin_fd = ~0;
@@ -24,7 +24,7 @@ char* get_wii_model()
         return "Dolphin";
     }
 
-    if (is_vwii())
+    if (IS_VWII)
     {
         return "Wii U";
     }

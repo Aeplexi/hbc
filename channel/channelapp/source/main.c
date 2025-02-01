@@ -38,6 +38,7 @@
 #include "manage.h"
 #include "xml.h"
 #include "title.h"
+#include "wiiinfo.h"
 
 // Languages
 #include "spanish_mo.h"
@@ -463,7 +464,7 @@ void main_real(void) {
 					continue;
 				// either launch bootmii or reboot the console, depending on if a vwii is detected
 				case 2:
-					if (is_vwii())
+					if (IS_VWII)
 					{
 						reboot_console = true;
 						should_exit = true;
