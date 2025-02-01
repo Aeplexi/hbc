@@ -1,16 +1,21 @@
 #include <ogc/ipc.h>
+#include <ogc/conf.h>
 #include <gccore.h>
 
 #include "title.h"
 #include "string.h"
+#include "m_main.h"
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static const char* netConfig [[gnu::aligned(0x20)]] = "/shared2/sys/net/02/config.dat";
 static u8 netBuffer[7004] [[gnu::aligned(0x20)]];
 static int dolphin_fd = ~0;
+
 extern int __CONF_GetTxt(const char *name, char *buf, int length);
+
 // int connection1_selectpos = 8, connection2_selectpos = 8+2332, connection3_selectpos = 8+2332+2332;
 // thanks Naim2000/thepikachugamer for this method of detecting dolphin
+
 bool is_dolphin() {
 	if (!~dolphin_fd) {
 		dolphin_fd = IOS_Open(devDolphin, 0);
@@ -69,6 +74,43 @@ int check_setting() {
 	return ret;
 }
 
+char* get_area()
+{
+	// there definitely is a better way to do this, i know this kinda sucks
+	s32 area = CONF_GetArea();
+	switch (area)
+	{
+		case CONF_AREA_JPN:
+			return "Japan";
+		case CONF_AREA_USA:
+			return "USA/Canada";
+		case CONF_AREA_EUR:
+			return "Europe";
+		case CONF_AREA_AUS:
+			return "Australia";
+		case CONF_AREA_BRA:
+			return "Brazil";
+		case CONF_AREA_TWN:
+			return "Taiwan";
+		case CONF_AREA_ROC:
+			return "Republic of China";
+		case CONF_AREA_KOR:
+			return "Korea";
+		case CONF_AREA_HKG:
+			return "Hong Kong";
+		case CONF_AREA_ASI:
+			return "Asia";
+		case CONF_AREA_LTN:
+			return "Latin America";
+		case CONF_AREA_SAF:
+			return "South Africa";
+		case CONF_AREA_CHN:
+			return "China (ique wtf?)";
+		default:
+			return "unknown";
+	}
+}
+
 // TODO: maybe use an enum later?  needs revamp
 char* get_wii_model() {
 	int setting = check_setting();
@@ -98,4 +140,16 @@ char* get_wii_model() {
 	}
 
 	return "Wii";
+}
+
+// TODO: Don't use m_main.h for this, bad practice imo - aep
+
+char* is_priiloader_installed()
+{
+	bool is_installed = priiloader_is_installed();
+	if (is_installed)
+	{
+		return "Yes";
+	}
+	return "No";
 }

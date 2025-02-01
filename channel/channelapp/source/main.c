@@ -490,9 +490,9 @@ void main_real(void) {
 							ip = 0;
 						}
 						sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
-								"Unimplemented", "Unimplemented", "Unimplemented",
+								get_area(), "Unimplemented", "Unimplemented",
 								"Unimplemented", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
-								(ip >> 8) & 0xff, ip & 0xff, system_menu_version_string, "Unimplemented", "Unimplemented", "Unimplemented");
+								(ip >> 8) & 0xff, ip & 0xff, system_menu_version_string, is_priiloader_installed(), "Unimplemented", "Unimplemented");
 						show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
 									  sysinfo_buf, 1);
 						continue;
