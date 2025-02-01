@@ -1,6 +1,5 @@
 #include <ogc/ipc.h>
 #include <ogc/conf.h>
-#include <gccore.h>
 
 #include "title.h"
 #include "string.h"
@@ -13,25 +12,41 @@ static int dolphin_fd = ~0;
 
 extern int __CONF_GetTxt(const char *name, char *buf, int length);
 
-// int connection1_selectpos = 8, connection2_selectpos = 8+2332, connection3_selectpos = 8+2332+2332;
 // thanks Naim2000/thepikachugamer for this method of detecting dolphin
-
 bool is_dolphin() {
-	if (!~dolphin_fd) {
+	if (!~dolphin_fd) { // has this already been checked for? if not:
+		// /dev/dolphin would only exist on Dolphin, so try to open it
 		dolphin_fd = IOS_Open(devDolphin, 0);
-		if (dolphin_fd > 0)
+		if (dolphin_fd > 0) // close if it actually worked, it is in fact Dolphin
 			IOS_Close(dolphin_fd);
 	}
-	return dolphin_fd > 0;
+	return dolphin_fd > 0; // if opening returns an error, /dev/dolphin doesn't exist, and therefore, isn't Dolphin
 }
 
-s32 check_network() {
+s32 check_connection() {
 	int fd;
-	int ret;
-	fd = IOS_Open( netConfig, 1);
+	s32 ret;
+	u8 i;
+	fd = IOS_Open(netConfig, 1);
 	if (fd < 0) return fd;
 
 	ret = IOS_Read(fd, netBuffer, 7004);
+	if (ret < 0)
+		return ret;
+	for (i = 0; i < 4; i++) {
+		if (i == 3) {
+			// No connection is selected
+			ret = 0;
+			break;
+		}
+		// is connection #i selected?
+		if (netBuffer[8 + 2332 * i] & 0b10000000)
+			break;
+	}
+	if (netBuffer[8 + 2332 * i] & 1) {
+		ret = 1; // wired connection
+	} else
+		ret = 2; // wireless connection
 	IOS_Close(fd);
 	return ret;
 }
@@ -41,10 +56,10 @@ char* get_serial(char* code) {
 	s32 ret;
 	ret = __CONF_GetTxt("CODE", code, 4);
 	if (ret < 0)
-		return "err";
+		return "CODE err";
 	ret = __CONF_GetTxt("SERNO", serno, 10);
 	if (ret < 0)
-		return "err";
+		return "SERNO err";
 	strcat(code, serno);
 	return code;
 }
@@ -76,14 +91,14 @@ int check_setting() {
 
 char* get_area()
 {
-	// there definitely is a better way to do this, i know this kinda sucks
+	// TODO: there definitely is a better way to do this, i know this kinda sucks
 	s32 area = CONF_GetArea();
 	switch (area)
 	{
 		case CONF_AREA_JPN:
 			return "Japan";
 		case CONF_AREA_USA:
-			return "USA/Canada";
+			return "North America";
 		case CONF_AREA_EUR:
 			return "Europe";
 		case CONF_AREA_AUS:
@@ -111,35 +126,30 @@ char* get_area()
 	}
 }
 
-// TODO: maybe use an enum later?  needs revamp
+// TODO: maybe use an enum later? needs revamp
 char* get_wii_model() {
 	int setting = check_setting();
 
     if (is_dolphin()) {
         return "Dolphin";
+	} else if (is_vwii()) {
+		return "Wii U";
 	}
 
-	if (setting == 1) {
-		return "Wii Family Edition";
-	}
+	switch (setting) {
+		case 1:
+			return "Wii Family Edition";
 
-	if (setting == 2) {
-		return "Wii Mini";
-	}
+		case 2:
+			return "Wii Mini";
 
-	if (setting == 3) {
-		return "NDEV";
-	}
+		case 3:
+			return "NDEV";
 
-    if (is_vwii()) {
-        return "Wii U";
-	}
+		default:
+			return "Wii";
 
-	if (setting < 0) {
-		return "Unknown model";
 	}
-
-	return "Wii";
 }
 
 // TODO: Don't use m_main.h for this, bad practice imo - aep

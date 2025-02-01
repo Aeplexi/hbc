@@ -63,7 +63,6 @@ extern const u32 stub_bin_size;
 
 static u64 *conf_magic = STUB_ADDR_MAGIC;
 // static u64 *conf_title_id = STUB_ADDR_TITLE;
-static u32 ip;
 
 static bool should_exit;
 static bool shutdown;
@@ -72,6 +71,9 @@ static bool gdb;
 #endif
 static const char *text_delete;
 static const char *text_error_delete;
+static const char *text_wired;
+static const char *text_wireless;
+static const char *text_not_connected;
 static const char *string_sysinfo;
 
 extern enum menuindex menu_index;
@@ -260,14 +262,16 @@ static void main_pre(void) {
 static void load_text(void) {
 	text_delete = _("Do you really want to delete this application?");
 	text_error_delete = _("Error deleting '%s'");
+	text_wired = _("Wired");
+	text_wireless = _("Wireless");
+	text_not_connected = _("Not Connected");
 	string_sysinfo =
 		"Serial No: %s\n"
 		"Console Model: %s\n"
 		"Console Region: %s\n"
 		"CPU: %s\n"
-		"Drive Date: %s\n"
-		"Current Network: %s\n"
-		"IP Address: %u.%u.%u.%u\n"
+		"Connection Type: %s\n"
+		"IP Address: %s\n"
 		"System Menu: %s\n"
 		"Is Priiloader Installed: %s\n"
 		"Is BootMii IOS installed: %s";
@@ -299,6 +303,7 @@ void main_real(void) {
 	u32 bd, bh;
 	s8 clicked;
 	s16 mm;
+	u32 ip = 0;
 
 #ifdef ENABLE_UPDATES
 	s16 update_check = -1;
@@ -323,6 +328,8 @@ void main_real(void) {
 	char charbuf[PATH_MAX];
 	char sysinfo_buf[500];
 	char code[14];
+	char ip_text[16];
+	char connection_text[14];
 
 	load_text();
 
@@ -476,44 +483,55 @@ void main_real(void) {
 			if (bd & PADS_A) {
 				if (menu_index == MENU_HOME) {
 					switch (v_m_main->focus) {
-					case 0:
-						show_message(v_current, DLGMT_ERROR, DLGB_OK,
-									 "unimplemented", 1);
-						continue;
+						case 0:
+							show_message(v_current, DLGMT_ERROR, DLGB_OK,
+										"Unimplemented", 1);
+							continue;
 
-					case 1:
-						get_serial(code);
-						if (loader_tcp_initialized()) {
+						case 1:
+							get_serial(code);
+							if (loader_tcp_initialized()) {
+								ip = net_gethostip();
+								sprintf(ip_text, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
+										(ip >> 8) & 0xff, ip & 0xff);
+								switch (check_connection()) {
+									case 1:
+										memcpy(connection_text, text_wired, 6);
+										break;
+									case 2:
+										memcpy(connection_text, text_wireless, 9);
+										break;
+									default:
+										memcpy(connection_text, text_not_connected, 14);
+								}
+							} else {
+								memcpy(ip_text, text_not_connected, 14);
+								memcpy(connection_text, text_not_connected, 14);
+							}
+							sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
+									get_area(), "Unimplemented",
+									connection_text, ip_text, system_menu_version_string, is_priiloader_installed(), "Unimplemented", "Unimplemented");
+							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
+										sysinfo_buf, 1);
+							continue;
 
-							ip = net_gethostip();
-						} else {
-							ip = 0;
-						}
-						sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
-								get_area(), "Unimplemented", "Unimplemented",
-								"Unimplemented", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
-								(ip >> 8) & 0xff, ip & 0xff, system_menu_version_string, is_priiloader_installed(), "Unimplemented", "Unimplemented");
-						show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
-									  sysinfo_buf, 1);
-						continue;
+						case 2:
+							v_about = dialog_about (v_m_main);
+							v_current = v_about;
 
-					case 2:
-						v_about = dialog_about (v_m_main);
-						v_current = v_about;
+							view_enable_cursor (false);
 
-						view_enable_cursor (false);
+							dialog_fade (v_current, true);
 
-						dialog_fade (v_current, true);
+							exit_about = false;
 
-						exit_about = false;
+							continue;
 
-						continue;
-
-					case 3:
-						menu_index = MENU_EXIT;
-						m_main_theme_reinit();
-						m_main_update();
-						continue;
+						case 3:
+							menu_index = MENU_EXIT;
+							m_main_theme_reinit();
+							m_main_update();
+							continue;
 					}
 				} else if (menu_index == MENU_EXIT) {
 					switch (v_m_main->focus) {
