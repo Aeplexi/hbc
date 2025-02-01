@@ -268,11 +268,10 @@ static void load_text(void) {
 	string_sysinfo =
 		"Serial No: %s\n"
 		"Console Model: %s\n"
-		"Console Region: %s\n"
-		"CPU: %s\n"
+		"Hardware Region: %s\n"
 		"Connection Type: %s\n"
 		"IP Address: %s\n"
-		"System Menu: %s\n"
+		"System Menu: %s (v%u)\n"
 		"Is Priiloader Installed: %s\n"
 		"Is BootMii IOS installed: %s";
 }
@@ -326,7 +325,7 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
-	char sysinfo_buf[500];
+	char *sysinfo_buf = malloc(500); // TODO: find the theoretical maximum size
 	char code[14];
 	char ip_text[16];
 	char connection_text[14];
@@ -509,8 +508,8 @@ void main_real(void) {
 								memcpy(connection_text, text_not_connected, 14);
 							}
 							sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
-									get_area(), "Unimplemented",
-									connection_text, ip_text, system_menu_version_string, is_priiloader_installed(), "Unimplemented", "Unimplemented");
+									get_area(), connection_text, ip_text,
+									system_menu_version_string, system_menu_tmd_version, is_priiloader_installed(), is_bootmii_installed());
 							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
 										sysinfo_buf, 1);
 							continue;

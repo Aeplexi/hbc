@@ -32,7 +32,7 @@ static bool priiloader = false;
 enum menuindex menu_index = MENU_HOME;
 enum menuindex parent_menu = MENU_HOME;
 
-static bool bootmii_is_installed(u64 title_id) {
+bool bootmii_is_installed(u64 title_id) {
 	u32 tmd_view_size;
 	u8 *tmdbuf;
 	bool ret;
@@ -255,7 +255,6 @@ int button_y_offset(int y, int multiplier) {
 void m_main_theme_reinit(void) {
 	u16 x, y = 0, yadd = 0, extra_buttons = 0;
 	int i;
-	char bufferwiinote[55];
 	char buffer[50];
 
 	text_no_ip = _("Network not initialized");
@@ -324,29 +323,18 @@ void m_main_theme_reinit(void) {
 						   _("Power Off"));
 			break;
 	}
-	// Wii Menu Version and Model
-
-	u16 system_menu_tmd_version = get_tmd_version(0x0000000100000002ll);
-	char* system_menu_version_string = get_system_menu_version_string(system_menu_tmd_version);
-
-	char* wii_revision = get_wii_model();
-
-	// SM/Wii Revision
-
-	sprintf(bufferwiinote, "SM %s (v%d) [%s]", system_menu_version_string, system_menu_tmd_version, wii_revision);
-
-	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 32, 32, 0,
-				  bufferwiinote, view_width / 3 - 0, FA_RIGHT,
-			   FA_ASCENDER, FONT_LABEL);
-
 	// HBC and IOS version
 
-	sprintf(buffer, "HBC v%s, IOS%d v%d.%d", CHANNEL_VERSION_STR, IOS_GetVersion(), IOS_GetRevisionMajor(),
+	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 32,
+				  32, 0, CHANNEL_VERSION_STR,
+				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+
+	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
 	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 32,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
-				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	inited_widgets = true;
 }

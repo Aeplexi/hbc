@@ -1,6 +1,7 @@
 #include <ogc/ipc.h>
 #include <ogc/conf.h>
 
+#include "../config.h"
 #include "title.h"
 #include "string.h"
 #include "m_main.h"
@@ -89,12 +90,10 @@ int check_setting() {
 	return ret;
 }
 
-char* get_area()
-{
+char* get_area() {
 	// TODO: there definitely is a better way to do this, i know this kinda sucks
 	s32 area = CONF_GetArea();
-	switch (area)
-	{
+	switch (area) {
 		case CONF_AREA_JPN:
 			return "Japan";
 		case CONF_AREA_USA:
@@ -154,12 +153,14 @@ char* get_wii_model() {
 
 // TODO: Don't use m_main.h for this, bad practice imo - aep
 
-char* is_priiloader_installed()
-{
-	bool is_installed = priiloader_is_installed();
-	if (is_installed)
-	{
+char* is_priiloader_installed() {
+	if (priiloader_is_installed(TITLEID_SYSMENU))
 		return "Yes";
-	}
+	return "No";
+}
+
+char* is_bootmii_installed() {
+	if (bootmii_is_installed(TITLEID_BOOTMII))
+		return "Yes";
 	return "No";
 }
