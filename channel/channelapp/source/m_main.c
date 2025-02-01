@@ -12,7 +12,6 @@
 #include "i18n.h"
 #include "panic.h"
 #include "m_main.h"
-#include "title.h"
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
@@ -230,7 +229,7 @@ static bool inited_widgets = false;
 view * m_main_init (void) {
 	bootmii_ios = bootmii_is_installed(TITLEID_BOOTMII);
 	priiloader = priiloader_is_installed(TITLEID_SYSMENU);
-	vwii = is_vwii();
+	vwii = IS_VWII;
 
 	v_m_main = view_new (9, NULL, 0, 0, 0, 0);
 

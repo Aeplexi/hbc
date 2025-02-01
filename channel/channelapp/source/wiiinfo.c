@@ -5,6 +5,7 @@
 #include "title.h"
 #include "string.h"
 #include "m_main.h"
+#include "wiiinfo.h"
 
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static const char* netConfig [[gnu::aligned(0x20)]] = "/shared2/sys/net/02/config.dat";
@@ -131,7 +132,7 @@ char* get_wii_model() {
 
     if (is_dolphin()) {
         return "Dolphin";
-	} else if (is_vwii()) {
+	} else if (IS_VWII) {
 		return "Wii U";
 	}
 

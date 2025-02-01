@@ -3,6 +3,8 @@
 
 #include <gctypes.h>
 
+#define IS_VWII ((*(vu32*)(0xCD8005A0) >> 16 ) == 0xCAFE)
+
 char* get_wii_model();
 s32 check_connection();
 char* check_connection_str();

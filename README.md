@@ -13,7 +13,7 @@ Not included:
 
 * Installer
 
-This has been tested on a real Wii, a Wii mini, and a vWii (Wii U).
+This has been tested on a real Wii, a Wii mini, and vWii (a Wii U).
 
 ## Build instructions
 

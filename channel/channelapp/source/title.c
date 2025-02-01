@@ -81,12 +81,6 @@ static bool title_is_installed(u64 title_id) {
 	return true;
 }
 
-#define TITLEID_200           0x0000000100000200ll
-
-bool is_vwii(void) {
-	return title_is_installed(TITLEID_200);
-}
-
 void title_init(void) {
 	memset(title_path, 0, sizeof(title_path));
 	title_get_msid();
