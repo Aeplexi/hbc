@@ -325,7 +325,7 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
-	char *sysinfo_buf = malloc(500); // TODO: find the theoretical maximum size
+	char sysinfo_buf[500]; // TODO: find the theoretical maximum size
 	char code[14];
 	char ip_text[16];
 	char connection_text[14];
