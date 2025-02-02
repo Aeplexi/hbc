@@ -267,7 +267,7 @@ static void load_text(void) {
 	text_not_connected = _("Not Connected");
 	string_sysinfo =
 		"Serial No: %s\n"
-		"Console Model: %s\n"
+		"Console: %s\n"
 		"Hardware Region: %s\n"
 		"Connection Type: %s\n"
 		"IP Address: %s\n"
