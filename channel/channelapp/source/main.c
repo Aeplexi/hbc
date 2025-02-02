@@ -509,7 +509,7 @@ void main_real(void) {
 							}
 							sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
 									get_area(), connection_text, ip_text,
-									system_menu_version_string, system_menu_tmd_version, is_priiloader_installed(), is_bootmii_installed());
+									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_is_installed_text());
 							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
 										sysinfo_buf, 1);
 							continue;

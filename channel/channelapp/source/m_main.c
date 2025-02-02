@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <ogc/machine/processor.h>
-#include <ogc/isfs.h>
 #include <ogcsys.h>
 #include <network.h>
 
@@ -10,7 +9,6 @@
 #include "view.h"
 #include "loader.h"
 #include "i18n.h"
-#include "panic.h"
 #include "m_main.h"
 #include "wiiinfo.h"
 #include "nand.h"
@@ -31,109 +29,7 @@ static bool priiloader = false;
 enum menuindex menu_index = MENU_HOME;
 enum menuindex parent_menu = MENU_HOME;
 
-bool bootmii_is_installed(u64 title_id) {
-	u32 tmd_view_size;
-	u8 *tmdbuf;
-	bool ret;
-
-	if (ES_GetTMDViewSize(title_id, &tmd_view_size) < 0)
-		return false;
-
-	if (tmd_view_size < 90)
-		return false;
-
-	if (tmd_view_size > 1024)
-		return false;
-
-	tmdbuf = pmemalign(32, 1024);
-
-	if (ES_GetTMDView(title_id, tmdbuf, tmd_view_size) < 0) {
-		free(tmdbuf);
-		return false;
-	}
-
-	if (tmdbuf[50] == 'B' && tmdbuf[51] == 'M')
-		ret = true;
-	else
-		ret = false;
-
-	free(tmdbuf);
-
-	return ret;
-}
-
-static u32 GetSysMenuBootContent(void)
-{
-	s32 ret;
-	u32 cid = 0;
-	u32 size = 0;
-	signed_blob *s_tmd = NULL;
-
-	ret = ES_GetStoredTMDSize(0x100000002LL, &size);
-	if (!size)
-	{
-		printf("Error! ES_GetStoredTMDSize failed (ret=%i)\n", ret);
-		return 0;
-	}
-
-	s_tmd = memalign(32, size);
-	if (!s_tmd)
-	{
-		printf("Error! Memory allocation failed!\n");
-		return 0;
-	}
-
-	ret = ES_GetStoredTMD(0x100000002LL, s_tmd, size);
-	if (ret < 0)
-	{
-		printf("Error! ES_GetStoredTMD failed (ret=%i)\n", ret);
-		free(s_tmd);
-		return 0;
-	}
-
-	tmd *p_tmd = SIGNATURE_PAYLOAD(s_tmd);
-
-	for (int i = 0; i < p_tmd->num_contents; i++)
-	{
-		tmd_content* content = &p_tmd->contents[i];
-		if (content->index == p_tmd->boot_index)
-		{
-			cid = content->cid;
-			break;
-		}
-	}
-
-	free(s_tmd);
-	if (!cid) printf("Error! Cannot find system menu boot content!\n");
-
-	return cid;
-}
-
-bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL)
-{
-	u32 cid = GetSysMenuBootContent();
-	if (!cid) return false;
-
-	if (mainDOL) cid |= 0x10000000;
-	sprintf(path, "/title/00000001/00000002/content/%08x.app", cid);
-
-	return true;
-}
-
-bool priiloader_is_installed()
-{
-	char path[ISFS_MAXPATH] ATTRIBUTE_ALIGN(0x20);
-
-	if (!GetSysMenuExecPath(path, true))
-		return false;
-
-	u32 size = 0;
-	NANDGetFileSize(path, &size);
-
-	return (size > 0);
-}
-
-// todo: move to diff file!
+// TODO: move to diff file!
 
 struct system_menu_version {
 	u16 number;

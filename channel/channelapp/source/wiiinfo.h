@@ -7,11 +7,12 @@
 
 char* get_wii_model();
 s32 check_connection();
-char* check_connection_str();
 char* get_serial();
 int check_setting();
 char* get_area();
-char* is_priiloader_installed();
-char* is_bootmii_installed();
+bool priiloader_is_installed();
+bool bootmii_is_installed();
+char* priiloader_is_installed_text();
+char* bootmii_is_installed_text();
 
 #endif
