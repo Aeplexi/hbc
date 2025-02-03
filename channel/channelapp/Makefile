@@ -190,6 +190,10 @@ wiiload:
 	@$(MAKE) --no-print-directory all
 	@$(DEVKITPPC)/bin/wiiload $(TARGET_APP).elf
 
+dolphin:
+	@$(MAKE) --no-print-directory all
+	dolphin-emu -b $(TARGET_APP)_nopax.elf
+
 upload: wiiload
 
 $(POTPL).gen: source/*.c
