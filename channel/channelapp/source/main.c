@@ -325,7 +325,7 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
-	char sysinfo_buf[500]; // TODO: find the theoretical maximum size
+	char sysinfo_buf[300]; // TODO: find the theoretical maximum size
 	char code[14];
 	char ip_text[16];
 	char connection_text[14];
@@ -484,7 +484,7 @@ void main_real(void) {
 					switch (v_m_main->focus) {
 						case 0:
 							show_message(v_current, DLGMT_ERROR, DLGB_OK,
-										"Unimplemented", 1);
+										"Unimplemented", 0);
 							continue;
 
 						case 1:
@@ -507,11 +507,11 @@ void main_real(void) {
 								memcpy(ip_text, text_not_connected, 14);
 								memcpy(connection_text, text_not_connected, 14);
 							}
-							sprintf(sysinfo_buf, string_sysinfo, code, get_wii_model(),
+							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
 									get_area(), connection_text, ip_text,
 									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_is_installed_text());
 							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
-										sysinfo_buf, 1);
+										sysinfo_buf, 0);
 							continue;
 
 						case 2:
