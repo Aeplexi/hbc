@@ -44,8 +44,8 @@ s32 check_connection() {
 	for (i = 0; i < 4; i++) {
 		if (i == 3) {
 			// No connection is selected
-			ret = 0;
-			break;
+			IOS_Close(fd);
+			return 0;
 		}
 		// is connection #i selected?
 		if (netBuffer[8 + 2332 * i] & 0b10000000)
