@@ -327,6 +327,7 @@ void main_real(void) {
 	char charbuf[PATH_MAX];
 	char sysinfo_buf[300]; // TODO: find the theoretical maximum size
 	char code[14];
+	char region[4];
 	char ip_text[16];
 	char connection_text[14];
 
@@ -489,9 +490,10 @@ void main_real(void) {
 
 						case 1:
 							get_serial(code);
+							get_hardware_region(region);
 							if (loader_tcp_initialized()) {
 								ip = net_gethostip();
-								sprintf(ip_text, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
+								snprintf(ip_text, 16, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
 										(ip >> 8) & 0xff, ip & 0xff);
 								switch (check_connection()) {
 									case 1:
@@ -508,9 +510,9 @@ void main_real(void) {
 								memcpy(connection_text, text_not_connected, 14);
 							}
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
-									get_area(), connection_text, ip_text,
+									region, connection_text, ip_text,
 									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_is_installed_text());
-							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
+							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										sysinfo_buf, 0);
 							continue;
 

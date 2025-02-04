@@ -17,7 +17,8 @@ typedef enum {
 typedef enum {
 	DLGB_OK,
 	DLGB_OKCANCEL,
-	DLGB_YESNO
+	DLGB_YESNO,
+	DLGB_NONE
 } dialog_message_buttons;
 
 typedef struct {

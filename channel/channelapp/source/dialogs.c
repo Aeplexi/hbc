@@ -337,6 +337,7 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 	case DLGB_OKCANCEL:
 	case DLGB_YESNO:
 		c += 2;
+	case DLGB_NONE:
 		break;
 	}
 
@@ -379,7 +380,9 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 				  FONT_DLGTITLE);
 
 	hf = font_get_height (FONT_DLGTITLE);
-	yb = theme_gfx[THEME_DIALOG]->h - theme_gfx[THEME_BUTTON_SMALL]->h - 32;
+	yb = theme_gfx[THEME_DIALOG]->h - 32;
+	if (buttons != DLGB_NONE)
+		yb -= theme_gfx[THEME_BUTTON_SMALL]->h;
 	ym = 32 + hf + 8;
 	hm = yb - ym - 8;
 
@@ -387,37 +390,43 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 						theme_gfx[THEME_DIALOG]->w - 64, hm, text, FA_CENTERED);
 
 	switch (buttons) {
-	case DLGB_OK:
-		b1 = caption_ok;
-		b2 = NULL;
-		break;
+		case DLGB_OK:
+			b1 = caption_ok;
+			b2 = NULL;
+			break;
 
-	case DLGB_OKCANCEL:
-		b1 = caption_ok;
-		b2 = caption_cancel;
-		break;
+		case DLGB_OKCANCEL:
+			b1 = caption_ok;
+			b2 = caption_cancel;
+			break;
 
-	case DLGB_YESNO:
-		b1 = caption_yes;
-		b2 = caption_no;
-		break;
+		case DLGB_YESNO:
+			b1 = caption_yes;
+			b2 = caption_no;
+			break;
+
+		case DLGB_NONE:
+			b1 = NULL;
+			b2 = NULL;
+			break;
 	}
 
 	if (b2) {
 		gap = (theme_gfx[THEME_DIALOG]->w -
-				theme_gfx[THEME_BUTTON_SMALL]->w * 2) / 3;
-
-		x = gap;
-		widget_button (&v->widgets[6], x, yb, 1, BTN_SMALL, b1);
-
-		x += gap + theme_gfx[THEME_BUTTON_SMALL]->w;
-		widget_button (&v->widgets[7], x, yb, 1, BTN_SMALL, b2);
+			   theme_gfx[THEME_BUTTON_SMALL]->w * 2) / 3;
 	} else {
 		gap = (theme_gfx[THEME_DIALOG]->w -
-				theme_gfx[THEME_BUTTON_SMALL]->w) / 2;
+			   theme_gfx[THEME_BUTTON_SMALL]->w) / 2;
+	}
+	x = gap;
 
-		x = gap;
+	if (b1) {
 		widget_button (&v->widgets[6], x, yb, 1, BTN_SMALL, b1);
+	}
+
+	if (b2) {
+		x += gap + theme_gfx[THEME_BUTTON_SMALL]->w;
+		widget_button (&v->widgets[7], x, yb, 1, BTN_SMALL, b2);
 	}
 
 	view_set_focus (v, 6 + focus);
@@ -462,7 +471,7 @@ s8 show_message (const view *sub_view, dialog_message_type type,
 
 		widget_scroll_memo_deco (&v->widgets[3], mm);
 
-		if ((bd & PADS_A) && (v->focus != -1))
+		if ((bd & PADS_A) && ((v->focus != -1) || (buttons == DLGB_NONE)))
 			break;
 	}
 

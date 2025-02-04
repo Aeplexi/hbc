@@ -78,15 +78,15 @@ struct system_menu_version version_table[] = {
 	{449, "4.1U"},
 	{481, "4.2U"},
 	{512, "4.3J"},
-	{513, "4.3U"}, // technically 4.3 is vWii 1.0.0 but it's gonna be too rare for somebody to be on that anyways probably
-	{544, "4.3J (Wii U 4.0.0J)"},
-	{545, "4.3U (Wii U 4.0.0U)"},
-	{546, "4.3E (Wii U 4.0.0E)"},
-	{608, "4.3J (Wii U 5.2.0J)"},
-	{609, "4.3U (Wii U 5.2.0U)"},
-	{610, "4.3E (Wii U 5.2.0E)"},
-	{4609, "4.3U (Wii mini)"},
-	{4610, "4.3E (Wii mini)"}
+	{513, "4.3U"},
+	{544, "4.3J"},
+	{545, "4.3U"},
+	{546, "4.3E"},
+	{608, "4.3J"},
+	{609, "4.3U"},
+	{610, "4.3E"},
+	{4609, "4.3U"},
+	{4610, "4.3E"}
 };
 
 char* get_system_menu_version_string(u16 number) {
@@ -187,7 +187,7 @@ void m_main_theme_reinit(void) {
 			parent_menu = MENU_HOME;
 
 			yadd = 32 * 2 / 5 ^ (extra_buttons);
-			extra_buttons = bootmii_ios + vwii + priiloader;
+			extra_buttons = bootmii_ios + priiloader;
 			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + 24;
 			if (bootmii_ios) {
 				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,

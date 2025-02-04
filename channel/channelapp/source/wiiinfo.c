@@ -97,39 +97,17 @@ int check_setting() {
 	return ret;
 }
 
-char* get_area() {
-	// TODO: there definitely is a better way to do this, i know this kinda sucks
-	s32 area = CONF_GetArea();
-	switch (area) {
-		case CONF_AREA_JPN:
-			return "Japan";
-		case CONF_AREA_USA:
-			return "North America";
-		case CONF_AREA_EUR:
-			return "Europe";
-		case CONF_AREA_AUS:
-			return "Australia";
-		case CONF_AREA_BRA:
-			return "Brazil";
-		case CONF_AREA_TWN:
-			return "Taiwan";
-		case CONF_AREA_ROC:
-			return "Republic of China";
-		case CONF_AREA_KOR:
-			return "Korea";
-		case CONF_AREA_HKG:
-			return "Hong Kong";
-		case CONF_AREA_ASI:
-			return "Asia";
-		case CONF_AREA_LTN:
-			return "Latin America";
-		case CONF_AREA_SAF:
-			return "South Africa";
-		case CONF_AREA_CHN:
-			return "China (ique wtf?)";
-		default:
-			return "unknown";
-	}
+char* get_hardware_region(char* region) {
+	s32 ret;
+	char model[13];
+	ret = __CONF_GetTxt("MODEL", model, 13);
+	if (ret < 0)
+		return "Error";
+	region[0] = model[8];
+	region[1] = model[9];
+	region[2] = model[10];
+	region[3] = '\0';
+	return region;
 }
 
 // TODO: maybe use an enum later? needs revamp
@@ -259,8 +237,6 @@ bool priiloader_is_installed()
 
 	return (size > 0);
 }
-
-// TODO: Don't use m_main.h for this, bad practice imo - aep
 
 char* bootmii_is_installed_text() {
 	if (bootmii_is_installed(TITLEID_BOOTMII))
