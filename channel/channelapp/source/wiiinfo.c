@@ -115,6 +115,24 @@ char* get_hardware_region(char* region) {
 	return region;
 }
 
+char* get_model_number(char* model_setting)
+{
+	s32 ret;
+	char model[13];
+	ret = __CONF_GetTxt("MODEL", model, 13);
+	if (ret < 0)
+		return "Failed to get the model number!";
+	model_setting[0] = model[0];
+	model_setting[1] = model[1];
+	model_setting[2] = model[2];
+	model_setting[3] = model[3];
+	model_setting[4] = model[4];
+	model_setting[5] = model[5];
+	model_setting[6] = model[6];
+	model_setting[7] = '\0';
+	return model_setting;
+}
+
 // TODO: maybe use an enum later? needs revamp
 char* get_wii_model() {
 	int setting = check_setting();

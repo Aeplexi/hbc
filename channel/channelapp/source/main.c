@@ -267,7 +267,7 @@ static void load_text(void) {
 	text_not_connected = _("Not Connected");
 	string_sysinfo =
 		"Serial No: %s\n"
-		"Console: %s\n"
+		"Console: %s (%s)\n"
 		"Hardware Region: %s\n"
 		"Connection Type: %s\n"
 		"IP Address: %s\n"
@@ -329,6 +329,7 @@ void main_real(void) {
 	char sysinfo_buf[300]; // TODO: find the theoretical maximum size
 	char code[14];
 	char region[4];
+	char model_number[13];
 	char ip_text[16];
 	char connection_text[14];
 
@@ -492,6 +493,7 @@ void main_real(void) {
 						case 1:
 							get_serial(code);
 							get_hardware_region(region);
+							get_model_number(model_number);
 							if (loader_tcp_initialized()) {
 								ip = net_gethostip();
 								snprintf(ip_text, 16, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
@@ -510,7 +512,7 @@ void main_real(void) {
 								memcpy(ip_text, text_not_connected, 14);
 								memcpy(connection_text, text_not_connected, 14);
 							}
-							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
+							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
 									region, connection_text, ip_text,
 									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_ios_is_installed_text(), bootmii_is_installed_text());
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
