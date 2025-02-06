@@ -123,7 +123,7 @@ u16 get_tmd_version(u64 title) {
 static bool inited_widgets = false;
 
 view * m_main_init (void) {
-	bootmii_ios = bootmii_is_installed(TITLEID_BOOTMII);
+	bootmii_ios = bootmii_ios_is_installed(TITLEID_BOOTMII);
 	priiloader = priiloader_is_installed(TITLEID_SYSMENU);
 	vwii = IS_VWII;
 

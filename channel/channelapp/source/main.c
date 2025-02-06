@@ -273,7 +273,8 @@ static void load_text(void) {
 		"IP Address: %s\n"
 		"System Menu: %s (v%u)\n"
 		"Is Priiloader Installed: %s\n"
-		"Is BootMii IOS installed: %s";
+		"Is BootMii (IOS) installed: %s\n"
+		"Is BootMii (boot2) installed: %s";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -511,7 +512,7 @@ void main_real(void) {
 							}
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
 									region, connection_text, ip_text,
-									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_is_installed_text());
+									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_ios_is_installed_text(), bootmii_is_installed_text());
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										sysinfo_buf, 0);
 							continue;
