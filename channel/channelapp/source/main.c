@@ -269,9 +269,9 @@ static void load_text(void) {
 		"Serial No: %s\n"
 		"Console: %s (%s)\n"
 		"Hardware Region: %s\n"
-		"Hollywood Version: v0x%x\n"
+		"Hollywood Version: v0x%x\n\n"
 		"Connection Type: %s\n"
-		"IP Address: %s\n"
+		"IP Address: %s\n\n"
 		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
 		"BootMii IOS: %s\n";
