@@ -14,8 +14,5 @@ char* get_model_number();
 bool priiloader_is_installed();
 bool bootmii_is_installed(int copy);
 bool bootmii_ios_is_installed();
-char* priiloader_is_installed_text();
-char* bootmii_is_installed_text();
-char* bootmii_ios_is_installed_text();
 
 #endif

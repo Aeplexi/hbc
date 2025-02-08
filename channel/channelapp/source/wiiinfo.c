@@ -12,12 +12,6 @@
 #include "string.h"
 #include "title.h"
 
-#define BLOCK_SIZE 64
-#define NAND_ECC_DATA_SIZE	0x40
-#define PAGE_SIZE_NO_ECC	0x800
-#define NAND_PAGE_SIZE		(PAGE_SIZE_NO_ECC + NAND_ECC_DATA_SIZE)
-#define NAND_BLOCK_SIZE		(NAND_PAGE_SIZE * BLOCK_SIZE)
-
 static const char* devDolphin [[gnu::aligned(0x20)]] = "/dev/dolphin";
 static const char* netConfig [[gnu::aligned(0x20)]] = "/shared2/sys/net/02/config.dat";
 static u8 netBuffer[7004] [[gnu::aligned(0x20)]];
@@ -159,66 +153,6 @@ char* get_wii_model() {
 	}
 }
 
-static s32 __isBlockBad(s32 fd) {
-	s32 rv;
-
-	rv = IOS_Ioctl(fd, 4, NULL, 0, NULL, 0); /* Is this block bad? */
-
-	return (rv == -13);
-}
-
-static s32 __readPage(u8* data, int pageno, void *ecc, s32 fd) {
-	static unsigned char buffer[NAND_PAGE_SIZE] __attribute__((aligned(0x20)));
-	int rv;
-
-	rv = IOS_Seek(fd, pageno, 0);
-
-	if (rv < 0)
-		return -3;
-
-	rv = IOS_Read(fd, buffer, (u32) NAND_PAGE_SIZE);
-
-	gprintf("IOS_Read returned %d\n", rv);
-
-	if (ecc) {
-		memcpy(data, buffer, PAGE_SIZE_NO_ECC);
-		memcpy(ecc, buffer + PAGE_SIZE_NO_ECC, NAND_ECC_DATA_SIZE);
-	} else
-		memcpy(data, buffer, NAND_PAGE_SIZE);
-
-
-	return 0;
-}
-
-bool bootmii_is_installed(int copy) {
-	s32 fd = IOS_Open("/dev/flash", IPC_OPEN_RW);
-
-	u8* nandPage;
-
-	u16 blocksToTest[3] = {1,192,448};
-	u16 block = blocksToTest[copy];
-
-	bool result;
-
-	IOS_Seek(fd, block, 0);
-
-	/* Is this block bad? */
-	if(__isBlockBad(fd)) {
-		IOS_Close(fd);
-		return -1;
-	}
-
-	/* [nitr8]: moved down here */
-	nandPage = (u8*)malloc(NAND_PAGE_SIZE);
-	__readPage(nandPage, block + 1, NULL, fd);
-	hexdump(nandPage, block + 1);
-	result = (nandPage[18] == 0x42 && nandPage[19] == 0x4D);
-	gprintf("%p", &nandPage[1654]);
-	free(nandPage);
-	IOS_Close(fd);
-	return result;
-}
-
 bool bootmii_ios_is_installed(u64 title_id) {
 	u32 tmd_view_size;
 	u8 *tmdbuf;
@@ -319,27 +253,4 @@ bool priiloader_is_installed()
 	NANDGetFileSize(path, &size);
 
 	return (size > 0);
-}
-
-char* bootmii_is_installed_text() {
-	u8 i;
-	if (IS_VWII)
-		return "N/A";
-	for (i = 0; i < 3; i++) {
-		if (bootmii_is_installed(i))
-			return "Is installed";
-	}
-	return "Not installed";
-}
-
-char* bootmii_ios_is_installed_text() {
-	if (bootmii_ios_is_installed(TITLEID_BOOTMII))
-		return "Is installed";
-	return "Not installed";
-}
-
-char* priiloader_is_installed_text() {
-	if (priiloader_is_installed(TITLEID_SYSMENU))
-		return "Is installed";
-	return "Not installed";
 }

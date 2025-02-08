@@ -269,12 +269,12 @@ static void load_text(void) {
 		"Serial No: %s\n"
 		"Console: %s (%s)\n"
 		"Hardware Region: %s\n"
+		"Hollywood Version: v0x%x\n"
 		"Connection Type: %s\n"
 		"IP Address: %s\n"
 		"System Menu: %s (v%u)\n"
-		"Is Priiloader: %s\n"
-		"BootMii (IOS): %s\n"
-		"BootMii (boot2): %s";
+		"Priiloader: %s\n"
+		"BootMii IOS: %s\n";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -513,8 +513,8 @@ void main_real(void) {
 								memcpy(connection_text, text_not_connected, 14);
 							}
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
-									region, connection_text, ip_text,
-									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed_text(), bootmii_ios_is_installed_text(), bootmii_is_installed_text());
+									region, (*(vu32*)0x80003138), connection_text, ip_text,
+									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed() ? "Installed" : "Not installed");
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										sysinfo_buf, 0);
 							continue;
