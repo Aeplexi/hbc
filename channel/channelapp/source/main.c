@@ -272,9 +272,9 @@ static void load_text(void) {
 		"Connection Type: %s\n"
 		"IP Address: %s\n"
 		"System Menu: %s (v%u)\n"
-		"Is Priiloader Installed: %s\n"
-		"Is BootMii (IOS) installed: %s\n"
-		"Is BootMii (boot2) installed: %s";
+		"Is Priiloader: %s\n"
+		"BootMii (IOS): %s\n"
+		"BootMii (boot2): %s";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -326,7 +326,7 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
-	char sysinfo_buf[300]; // TODO: find the theoretical maximum size
+	char sysinfo_buf[500]; // TODO: find the theoretical maximum size
 	char code[14];
 	char region[4];
 	char model_number[13];

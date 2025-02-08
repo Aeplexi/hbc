@@ -327,19 +327,19 @@ char* bootmii_is_installed_text() {
 		return "N/A";
 	for (i = 0; i < 3; i++) {
 		if (bootmii_is_installed(i))
-			return "Yes";
+			return "Is installed";
 	}
-	return "No";
+	return "Not installed";
 }
 
 char* bootmii_ios_is_installed_text() {
 	if (bootmii_ios_is_installed(TITLEID_BOOTMII))
-		return "Yes";
-	return "No";
+		return "Is installed";
+	return "Not installed";
 }
 
 char* priiloader_is_installed_text() {
 	if (priiloader_is_installed(TITLEID_SYSMENU))
-		return "Yes";
-	return "No";
+		return "Is installed";
+	return "Not installed";
 }
