@@ -494,7 +494,7 @@ void main_real(void) {
 							get_model_number(model_number);
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
 									region, (*(vu32*)0x80003138),
-									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed() ? "Installed" : "Not installed");
+									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed(TITLEID_BOOTMII) ? "Installed" : "Not installed");
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										sysinfo_buf, 0);
 							continue;
