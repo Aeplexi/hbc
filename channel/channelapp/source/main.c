@@ -906,7 +906,7 @@ void main_real(void) {
 
 	if (shutdown) {
 		gprintf ("shutting down\n");
-		STM_ShutdownToStandby();
+		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
 	}
 
 	gprintf ("returning to sysmenu\n");
