@@ -471,7 +471,7 @@ s8 show_message (const view *sub_view, dialog_message_type type,
 
 		widget_scroll_memo_deco (&v->widgets[3], mm);
 
-		if ((bd & PADS_A) && ((v->focus != -1) || (buttons == DLGB_NONE)))
+		if (((bd & PADS_A) || ((bd & PADS_B) && (buttons == DLGB_NONE))) && (v->focus != -1))
 			break;
 	}
 

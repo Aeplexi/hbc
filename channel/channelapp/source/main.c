@@ -266,15 +266,16 @@ static void load_text(void) {
 	text_wireless = _("Wireless");
 	text_not_connected = _("Not Connected");
 	string_sysinfo =
-		"Serial No: %s\n"
+		"Serial No.: %s\n"
 		"Console: %s (%s)\n"
-		"Hardware Region: %s\n"
-		"Hollywood Version: v0x%x\n\n"
-		"Connection Type: %s\n"
-		"IP Address: %s\n\n"
-		"System Menu: %s (v%u)\n"
+		"Hollywood version: v0x%x\n\n"
+		"Hardware region: %s\n"
+		"Connection type: %s\n"
+		"IP address: %s\n\n"
+		"System menu: %s (v%u)\n"
 		"Priiloader: %s\n"
-		"BootMii IOS: %s\n";
+		"BootMii (boot2): Not implemented\n"
+		"BootMii (IOS): %s";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -448,7 +449,7 @@ void main_real(void) {
 		}
 
 		if ((bd & PADS_HOME) && viewing) {
-			if (v_current == v_browser) {\
+			if (v_current == v_browser) {
 				menu_index = MENU_HOME;
 				m_main_theme_reinit();
 				m_main_update();
@@ -513,10 +514,10 @@ void main_real(void) {
 								memcpy(connection_text, text_not_connected, 14);
 							}
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
-									region, (*(vu32*)0x80003138), connection_text, ip_text,
+									(*(vu32*)0x80003138), region, connection_text, ip_text,
 									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed() ? "Installed" : "Not installed");
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
-										sysinfo_buf, 0);
+										 sysinfo_buf, 0);
 							continue;
 
 						case 2:
@@ -545,7 +546,6 @@ void main_real(void) {
 							break;
 						case 1:
 							launch_priiloader = true;
-							should_exit = true;
 						case 2:
 							should_exit = true;
 							continue;
@@ -558,7 +558,7 @@ void main_real(void) {
 							shutdown = true;
 							break;
 					}
-			}
+				}
 
 			continue;
 			}
@@ -627,28 +627,24 @@ void main_real(void) {
 
 				if (bd & PADS_A) {
 					clicked = view_widget_at_ir (v_browser);
+					switch (clicked) {
+						case 0:
+							browser_gen_view(BA_PREV, NULL);
+							continue;
 
-					if (clicked == 0) {
-						browser_gen_view(BA_PREV, NULL);
-						continue;
-					}
+						case 1:
+							browser_gen_view(BA_NEXT, NULL);
+							continue;
 
-					if (clicked == 1) {
-						browser_gen_view(BA_NEXT, NULL);
-						continue;
-					}
+						case 3:
+							loader_tcp_init ();
+							continue;
 
-					if (clicked == 3) {
-						loader_tcp_init ();
-						continue;
-					}
-
-					if (clicked == 4) {
-						egg_counter++;
-						if (egg_counter >= 69)
-							egg = true;
-						else
-						continue;
+						case 4:
+							egg_counter++;
+							if (egg_counter >= 69)
+								egg = true;
+							continue;
 					}
 
 					app_sel = browser_sel();
