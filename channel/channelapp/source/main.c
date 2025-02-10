@@ -270,9 +270,12 @@ static void load_text(void) {
 		"Console: %s (%s)\n"
 		"Hollywood version: v0x%x\n\n"
 		"Hardware region: %s\n"
-		"Connection type: %s\n"
-		"IP address: %s\n\n"
+		// "Connection type: %s\n"
+		// "IP address: %s\n\n"
 		"System menu: %s (v%u)\n"
+		"Hardware Region: %s\n"
+		"Hollywood Version: v0x%x\n\n"
+		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
 		"BootMii (boot2): Not implemented\n"
 		"BootMii (IOS): %s";
@@ -495,27 +498,9 @@ void main_real(void) {
 							get_serial(code);
 							get_hardware_region(region);
 							get_model_number(model_number);
-							if (loader_tcp_initialized()) {
-								ip = net_gethostip();
-								snprintf(ip_text, 16, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
-										(ip >> 8) & 0xff, ip & 0xff);
-								switch (check_connection()) {
-									case 1:
-										memcpy(connection_text, text_wired, 6);
-										break;
-									case 2:
-										memcpy(connection_text, text_wireless, 9);
-										break;
-									default:
-										memcpy(connection_text, text_not_connected, 14);
-								}
-							} else {
-								memcpy(ip_text, text_not_connected, 14);
-								memcpy(connection_text, text_not_connected, 14);
-							}
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
-									(*(vu32*)0x80003138), region, connection_text, ip_text,
-									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed() ? "Installed" : "Not installed");
+									(*(vu32*)0x80003138), region,
+									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed(TITLEID_BOOTMII) ? "Installed" : "Not installed");
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										 sysinfo_buf, 0);
 							continue;
