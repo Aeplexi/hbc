@@ -124,7 +124,7 @@ static bool inited_widgets = false;
 
 view * m_main_init (void) {
 	bootmii_ios = bootmii_ios_is_installed(TITLEID_BOOTMII);
-	priiloader = priiloader_is_installed(TITLEID_SYSMENU);
+	priiloader = priiloader_is_installed();
 	vwii = IS_VWII;
 
 	v_m_main = view_new (9, NULL, 0, 0, 0, 0);

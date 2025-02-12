@@ -268,13 +268,10 @@ static void load_text(void) {
 	string_sysinfo =
 		"Serial No.: %s\n"
 		"Console: %s (%s)\n"
-		"Hollywood version: v0x%x\n\n"
+		"Hollywood version: v0x%x\n"
 		"Hardware region: %s\n"
 		// "Connection type: %s\n"
 		// "IP address: %s\n\n"
-		"System menu: %s (v%u)\n"
-		"Hardware Region: %s\n"
-		"Hollywood Version: v0x%x\n\n"
 		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
 		"BootMii (boot2): Not implemented\n"
@@ -336,6 +333,9 @@ void main_real(void) {
 	char model_number[13];
 	char ip_text[16];
 	char connection_text[14];
+	char bootmii_ver[5];
+
+	bootmii_ios_version(TITLEID_BOOTMII, bootmii_ver);
 
 	load_text();
 
@@ -498,9 +498,11 @@ void main_real(void) {
 							get_serial(code);
 							get_hardware_region(region);
 							get_model_number(model_number);
-							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(), model_number,
-									(*(vu32*)0x80003138), region,
-									system_menu_version_string, system_menu_tmd_version, priiloader_is_installed() ? "Installed" : "Not installed", bootmii_ios_is_installed(TITLEID_BOOTMII) ? "Installed" : "Not installed");
+							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
+									 model_number, (*(vu32*)0x80003138), region,
+									 system_menu_version_string, system_menu_tmd_version,
+									 priiloader_is_installed() ? "Installed" : "Not installed",
+									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										 sysinfo_buf, 0);
 							continue;

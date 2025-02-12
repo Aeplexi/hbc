@@ -20,7 +20,7 @@ static int dolphin_fd = ~0;
 extern int __CONF_GetTxt(const char *name, char *buf, int length);
 
 // thanks Naim2000/thepikachugamer for this method of detecting dolphin
-bool is_dolphin() {
+bool is_dolphin(void) {
 	if (!~dolphin_fd) { // has this already been checked for? if not:
 		// /dev/dolphin would only exist on Dolphin, so try to open it
 		dolphin_fd = IOS_Open(devDolphin, 0);
@@ -30,7 +30,7 @@ bool is_dolphin() {
 	return dolphin_fd > 0; // if opening returns an error, /dev/dolphin doesn't exist, and therefore, isn't Dolphin
 }
 
-s32 check_connection() {
+s32 check_connection(void) {
 	int fd;
 	s32 ret;
 	u8 i;
@@ -41,16 +41,16 @@ s32 check_connection() {
 	if (ret < 0)
 		return ret;
 	for (i = 0; i < 4; i++) {
-		if (i == 3) {
+		if (i == 3) { // are we out of possible connections?
 			// No connection is selected
 			IOS_Close(fd);
 			return 0;
 		}
 		// is connection #i selected?
 		if (netBuffer[8 + 2332 * i] & 0b10000000)
-			break;
+			break; // connection #i is selected, stop cycling
 	}
-	if (netBuffer[8 + 2332 * i] & 1) {
+	if (netBuffer[8 + 2332 * i] & 1) { // the earlier break out of the for loop kept i at the selected connection
 		ret = 1; // wired connection
 	} else
 		ret = 2; // wireless connection
@@ -71,7 +71,7 @@ char* get_serial(char* code) {
 	return code;
 }
 
-int check_setting() {
+int check_setting(void) {
 	char code[4];
 	char model[13];
 	s32 ret;
@@ -109,33 +109,24 @@ char* get_hardware_region(char* region) {
 	return region;
 }
 
-char* get_model_number(char* model_setting)
-{
+void get_model_number(char* model_setting) {
 	s32 ret;
 	char model[13];
 	ret = __CONF_GetTxt("MODEL", model, 13);
 	if (ret < 0)
-		return "Failed to get the model number!";
-	model_setting[0] = model[0];
-	model_setting[1] = model[1];
-	model_setting[2] = model[2];
-	model_setting[3] = model[3];
-	model_setting[4] = model[4];
-	model_setting[5] = model[5];
-	model_setting[6] = model[6];
+		strcpy(model_setting, "MODEL error");
+	strncpy(model_setting, model, 7);
 	model_setting[7] = '\0';
-	return model_setting;
 }
 
 // TODO: maybe use an enum later? needs revamp
-char* get_wii_model() {
+char* get_wii_model(void) {
 	int setting = check_setting();
 
-    if (is_dolphin()) {
-        return "Dolphin";
-	} else if (IS_VWII) {
+	if (is_dolphin())
+		return "Dolphin";
+	if (IS_VWII)
 		return "Wii U";
-	}
 
 	switch (setting) {
 		case 1:
@@ -174,9 +165,9 @@ bool bootmii_ios_is_installed(u64 title_id) {
 		return false;
 	}
 
-	if (tmdbuf[50] == 'B' && tmdbuf[51] == 'M')
+	if (tmdbuf[50] == 'B' && tmdbuf[51] == 'M') {
 		ret = true;
-	else
+	} else
 		ret = false;
 
 	free(tmdbuf);
@@ -184,8 +175,31 @@ bool bootmii_ios_is_installed(u64 title_id) {
 	return ret;
 }
 
-static u32 GetSysMenuBootContent(void)
-{
+void bootmii_ios_version(u64 title_id, char* outbuf) {
+	u32 tmd_view_size;
+	u8 *tmdbuf;
+
+	if (ES_GetTMDViewSize(title_id, &tmd_view_size) < 0)
+		return;
+
+	if (tmd_view_size < 90)
+		return;
+
+	if (tmd_view_size > 1024)
+		return;
+
+	tmdbuf = pmemalign(32, 1024);
+
+	if (ES_GetTMDView(title_id, tmdbuf, tmd_view_size) < 0) {
+		free(tmdbuf);
+		return;
+	}
+	sprintf(outbuf, "v%.4s", (char*)tmdbuf + 52);
+
+	free(tmdbuf);
+}
+
+static u32 GetSysMenuBootContent(void) {
 	s32 ret;
 	u32 cid = 0;
 	u32 size = 0;
@@ -231,8 +245,7 @@ static u32 GetSysMenuBootContent(void)
 	return cid;
 }
 
-bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL)
-{
+bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL) {
 	u32 cid = GetSysMenuBootContent();
 	if (!cid) return false;
 
@@ -242,8 +255,7 @@ bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL)
 	return true;
 }
 
-bool priiloader_is_installed()
-{
+bool priiloader_is_installed(void) {
 	char path[ISFS_MAXPATH] ATTRIBUTE_ALIGN(0x20);
 
 	if (!GetSysMenuExecPath(path, true))
