@@ -2,15 +2,15 @@
 #define _CONFIG_H_
 
 #define CHANNEL_VERSION_DATE 202501220000llu
-#define CHANNEL_VERSION_STR "1.2.0-alpha"
+#define CHANNEL_VERSION_STR "v1.2.0-alpha1"
 
-//#define DEBUG_APP
-//#define DEBUG_STUB
+// #define DEBUG_APP
+// #define DEBUG_STUB
 
 #define ENABLE_WIDESCREEN
 #define ENABLE_SCREENSHOTS
-//#define ENABLE_UPDATES
-//#define FORCE_LANG CONF_LANG_JAPANESE
+// #define ENABLE_UPDATES
+// #define FORCE_LANG CONF_LANG_JAPANESE
 
 #ifdef DEBUG_APP
 void gprintf_enable(int enable);
@@ -45,7 +45,6 @@ void memstats(int reset);
 
 #define BOOTMII_IOS 254
 #define TITLEID_BOOTMII (0x0000000100000000LL | BOOTMII_IOS)
-#define TITLEID_SYSMENU 0x0000000100000002LL
 
 #define PREFERRED IOS_GetPreferredVersion()
 #define UNCHANGED IOS_GetVersion()
