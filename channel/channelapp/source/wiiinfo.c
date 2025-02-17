@@ -58,17 +58,16 @@ s32 check_connection(void) {
 	return ret;
 }
 
-char* get_serial(char* code) {
+void get_serial(char* code) {
 	char serno[10];
 	s32 ret;
 	ret = __CONF_GetTxt("CODE", code, 4);
 	if (ret < 0)
-		return "CODE err";
+		strcpy(code, "???");
 	ret = __CONF_GetTxt("SERNO", serno, 10);
 	if (ret < 0)
-		return "SERNO err";
+		strcpy(serno, "?????????");
 	strcat(code, serno);
-	return code;
 }
 
 int check_setting(void) {
@@ -96,17 +95,16 @@ int check_setting(void) {
 	return ret;
 }
 
-char* get_hardware_region(char* region) {
+void get_hardware_region(char* region) {
 	s32 ret;
 	char model[13];
 	ret = __CONF_GetTxt("MODEL", model, 13);
 	if (ret < 0)
-		return "Error";
+		strcpy(region, "???");
 	region[0] = model[8];
 	region[1] = model[9];
 	region[2] = model[10];
 	region[3] = '\0';
-	return region;
 }
 
 void get_model_number(char* model_setting) {
@@ -117,6 +115,41 @@ void get_model_number(char* model_setting) {
 		strcpy(model_setting, "MODEL error");
 	strncpy(model_setting, model, 7);
 	model_setting[7] = '\0';
+}
+
+char* get_area() {
+	// TODO: there definitely is a better way to do this, i know this kinda sucks
+	s32 area = CONF_GetArea();
+	switch (area) {
+		case CONF_AREA_JPN:
+			return "Japan";
+		case CONF_AREA_USA:
+			return "United States";
+		case CONF_AREA_EUR:
+			return "Europe";
+		case CONF_AREA_AUS:
+			return "Australia";
+		case CONF_AREA_BRA:
+			return "Brazil";
+		case CONF_AREA_TWN:
+			return "Taiwan";
+		case CONF_AREA_ROC:
+			return "Republic of China";
+		case CONF_AREA_KOR:
+			return "Korea";
+		case CONF_AREA_HKG:
+			return "Hong Kong";
+		case CONF_AREA_ASI:
+			return "Asia";
+		case CONF_AREA_LTN:
+			return "Latin America";
+		case CONF_AREA_SAF:
+			return "South Africa";
+		case CONF_AREA_CHN:
+			return "China (ique wtf?)";
+		default:
+			return "unknown";
+	}
 }
 
 // TODO: maybe use an enum later? needs revamp
@@ -175,7 +208,7 @@ bool bootmii_ios_is_installed(u64 title_id) {
 	return ret;
 }
 
-void bootmii_ios_version(u64 title_id, char* outbuf) {
+void bootmii_ios_version(u64 title_id, char* version) {
 	u32 tmd_view_size;
 	u8 *tmdbuf;
 
@@ -194,7 +227,7 @@ void bootmii_ios_version(u64 title_id, char* outbuf) {
 		free(tmdbuf);
 		return;
 	}
-	sprintf(outbuf, "v%.4s", (char*)tmdbuf + 52);
+	sprintf(version, "v%.4s", (char*)tmdbuf + 52);
 
 	free(tmdbuf);
 }

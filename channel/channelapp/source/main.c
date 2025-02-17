@@ -266,15 +266,14 @@ static void load_text(void) {
 	text_wireless = _("Wireless");
 	text_not_connected = _("Not Connected");
 	string_sysinfo =
-		"Serial No.: %s\n"
+		"S/N: %s\n"
 		"Console: %s (%s)\n"
 		"Hollywood version: v0x%x\n"
 		"Hardware region: %s\n"
-		// "Connection type: %s\n"
-		// "IP address: %s\n\n"
+		"Area: %s\n\n"
 		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
-		"BootMii (boot2): Not implemented\n"
+		// "BootMii (boot2): Not implemented\n"
 		"BootMii (IOS): %s";
 }
 
@@ -304,7 +303,6 @@ void main_real(void) {
 	u32 bd, bh;
 	s8 clicked;
 	s16 mm;
-	u32 ip = 0;
 
 #ifdef ENABLE_UPDATES
 	s16 update_check = -1;
@@ -331,8 +329,6 @@ void main_real(void) {
 	char code[14];
 	char region[4];
 	char model_number[13];
-	char ip_text[16];
-	char connection_text[14];
 	char bootmii_ver[5];
 
 	bootmii_ios_version(TITLEID_BOOTMII, bootmii_ver);
@@ -499,7 +495,7 @@ void main_real(void) {
 							get_hardware_region(region);
 							get_model_number(model_number);
 							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
-									 model_number, (*(vu32*)0x80003138), region,
+									 model_number, (*(vu32*)0x80003138), region, get_area(),
 									 system_menu_version_string, system_menu_tmd_version,
 									 priiloader_is_installed() ? "Installed" : "Not installed",
 									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
