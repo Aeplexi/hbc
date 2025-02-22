@@ -311,7 +311,7 @@ void m_main_theme_reinit(void) {
 
 	sprintf(bufferwiinote, "SM %s (v%d) [%s]", system_menu_version_string, system_menu_tmd_version, wii_revision);
 
-	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 32, 32, 0,
+	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48, 32, 0,
 				  bufferwiinote, view_width / 3 - 0, FA_RIGHT,
 			   FA_ASCENDER, FONT_LABEL);
 
@@ -320,7 +320,7 @@ void m_main_theme_reinit(void) {
 	sprintf(buffer, "HBC v%s, IOS%d v%d.%d", CHANNEL_VERSION_STR, IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
-	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 32,
+	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
 				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
