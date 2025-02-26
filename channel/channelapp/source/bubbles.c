@@ -35,7 +35,7 @@ static bubble sub_bubbles[MAX_BUBBLE_COUNT][BUBBLE_POP_MAX];
 static int bubble_count = -1;
 
 extern int score;
-extern int viewing;
+extern bool viewing;
 
 static void bubble_rand(int i) {
 	int tex;

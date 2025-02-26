@@ -11,6 +11,7 @@
 #include "view.h"
 #include "controls.h"
 #include "i18n.h"
+#include "wiiinfo.h"
 
 #include "browser.h"
 
@@ -43,6 +44,21 @@ void browser_deinit(void) {
 	v_browser = NULL;
 }
 
+gfx_entity *network_icon(bool active) {
+	switch (check_connection()) {
+		case 1:
+			if (active)
+				return theme_gfx[THEME_LAN_ACTIVE];
+			return theme_gfx[THEME_LAN];
+		case 2:
+			if (active)
+				return theme_gfx[THEME_WLAN_ACTIVE];
+			return theme_gfx[THEME_WLAN];
+		default:
+			return theme_gfx[THEME_DLG_ERROR];
+	}
+}
+
 void browser_theme_reinit(void) {
 	int i;
 	if (inited_widgets)
@@ -58,12 +74,12 @@ void browser_theme_reinit(void) {
 					theme_gfx[THEME_ARROW_RIGHT_FOCUS]);
 	widget_image (&v_browser->widgets[2],
 					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w -
-					theme_gfx[THEME_WLAN_ACTIVE]->w, 412, 0,
+					network_icon(true)->w, 412, 0,
 					theme_gfx[THEME_GECKO_ACTIVE], theme_gfx[THEME_GECKO],
 					false, NULL);
 	widget_image (&v_browser->widgets[3],
 					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w, 412, 0,
-					theme_gfx[THEME_WLAN_ACTIVE], theme_gfx[THEME_WLAN],
+					network_icon(true), network_icon(false),
 					false, NULL);
 	widget_image (&v_browser->widgets[4],
 				  0, 416, 0,
@@ -331,4 +347,3 @@ void browser_switch_mode(void) {
 	if (settings.browse_mode != mode)
 		settings.browse_mode = mode;
 }
-

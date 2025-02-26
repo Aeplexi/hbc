@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <math.h>
 
 #include <ogcsys.h>
 
@@ -42,7 +43,7 @@ static s8 rumble_timeout = -RUMBLE_DELAY;
 int score = 0;
 static int fading = 0;
 
-int viewing = 1;
+bool viewing = true;
 static gfx_queue_entry *sce = NULL;
 
 bool view_bubbles = false;
@@ -439,5 +440,8 @@ void view_show_throbber(bool show) {
 
 void view_throbber_tickle(void) {
 	entry_throbber.entity.rad -= 0.1f;
+	while (entry_throbber.entity.rad < -M_TWOPI) {
+		entry_throbber.entity.rad += M_TWOPI;
+	}
 }
 
