@@ -218,16 +218,17 @@ void m_main_theme_reinit(void) {
 						   _("Power Off"));
 			break;
 	}
+
 	// HBC and IOS version
 
-	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 32,
+	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48,
 				  32, 0, CHANNEL_VERSION_STR,
 				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
-	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 32,
+	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
 			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 

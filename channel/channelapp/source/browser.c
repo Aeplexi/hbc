@@ -65,24 +65,24 @@ void browser_theme_reinit(void) {
 		for (i = 0; i < v_browser->widget_count; ++i)
 			widget_free(&v_browser->widgets[i]);
 
-	widget_image (&v_browser->widgets[0], 24, 192, 0,
+	widget_image (&v_browser->widgets[0], 40, 192, 0,
 					theme_gfx[THEME_ARROW_LEFT], NULL, true,
 					theme_gfx[THEME_ARROW_LEFT_FOCUS]);
 	widget_image (&v_browser->widgets[1],
-					view_width - 24 - theme_gfx[THEME_ARROW_RIGHT]->w, 192, 0,
+					view_width - 40 - theme_gfx[THEME_ARROW_RIGHT]->w, 192, 0,
 					theme_gfx[THEME_ARROW_RIGHT], NULL, true,
 					theme_gfx[THEME_ARROW_RIGHT_FOCUS]);
 	widget_image (&v_browser->widgets[2],
-					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w -
+					view_width - 48 - theme_gfx[THEME_GECKO_ACTIVE]->w -
 					network_icon(true)->w, 412, 0,
 					theme_gfx[THEME_GECKO_ACTIVE], theme_gfx[THEME_GECKO],
 					false, NULL);
 	widget_image (&v_browser->widgets[3],
-					view_width - 32 - theme_gfx[THEME_GECKO_ACTIVE]->w, 412, 0,
+					view_width - 48 - theme_gfx[THEME_GECKO_ACTIVE]->w, 412, 0,
 					network_icon(true), network_icon(false),
 					false, NULL);
 	widget_image (&v_browser->widgets[4],
-				  0, 416, 0,
+				  16, 416, 0,
 			   theme_gfx[THEME_LOGO], theme_gfx[THEME_LOGO],
 			   false, NULL);
 	widget_set_flag (&v_browser->widgets[2], WF_ENABLED, false);
