@@ -499,7 +499,7 @@ void main_real(void) {
 									 system_menu_version_string, system_menu_tmd_version,
 									 priiloader_is_installed() ? "Installed" : "Not installed",
 									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
-							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
+							show_message(v_current, DLGMT_SYSINFO, DLGB_OK,
 										 sysinfo_buf, 0);
 							continue;
 
