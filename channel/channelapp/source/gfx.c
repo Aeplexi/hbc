@@ -51,7 +51,7 @@ void gfx_init_video (void) {
 		view_width = 852; // 16:9
 		view_height = 480;
 
-		vmode->viWidth = 672;
+		vmode->viWidth = 704;
 
 		widescreen = true;
 
@@ -66,7 +66,7 @@ void gfx_init_video (void) {
 		view_width = 640;
 		view_height = 480;
 
-		vmode->viWidth = 672;
+		vmode->viWidth = 704;
 
 		if (IS_VWII) {
 			// poke DMCU to turn on pillarboxing
