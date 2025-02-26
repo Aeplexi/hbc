@@ -196,7 +196,7 @@ msgstr "Netzwerk nicht initialisiert"
 
 #: source/m_main.c:81
 #, c-format
-msgid "Your Wii's IP is"
+msgid "Your Wii's IP is:"
 msgstr "Die IP deiner Wii ist:"
 
 # button text
