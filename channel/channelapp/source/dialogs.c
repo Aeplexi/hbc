@@ -429,7 +429,7 @@ static view *dialog_message(const view *sub_view, dialog_message_type type,
 		widget_button (&v->widgets[7], x, yb, 1, BTN_SMALL, b2);
 	}
 
-	view_set_focus (v, 6 + focus);
+	view_set_focus (v, (buttons != DLGB_NONE) ? 6 + focus : -1);
 
 	return v;
 }
@@ -475,7 +475,7 @@ s8 show_message (const view *sub_view, dialog_message_type type,
 			break;
 	}
 
-	res = v->focus - 6;
+	res = (buttons != DLGB_NONE) ? v->focus - 6 : 0;
 
 	dialog_fade (v, false);
 
