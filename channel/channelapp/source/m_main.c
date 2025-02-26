@@ -247,7 +247,6 @@ void m_main_deinit(void) {
 void m_main_theme_reinit(void) {
 	u16 x, y, yadd;
 	int i;
-	char bufferwiinote[55];
 	char buffer[50];
 
 	text_no_ip = _("Network not initialized");
@@ -297,24 +296,13 @@ void m_main_theme_reinit(void) {
 
 	widget_button (&v_m_main->widgets[5], x, y, 0, BTN_NORMAL, _("Shutdown"));
 
-	// Wii Menu Version and Model
-
-	u16 system_menu_tmd_version = get_tmd_version(0x0000000100000002ll);
-	char* system_menu_version_string = get_system_menu_version_string(system_menu_tmd_version);
-
-	char* wii_revision = get_wii_model();
-
-	// SM/Wii Revision
-
-	sprintf(bufferwiinote, "SM %s (v%d) [%s]", system_menu_version_string, system_menu_tmd_version, wii_revision);
-
-	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48, 32, 0,
-				  bufferwiinote, view_width / 3 - 0, FA_RIGHT,
-			   FA_ASCENDER, FONT_LABEL);
-
 	// HBC and IOS version
 
-	sprintf(buffer, "HBC v%s, IOS%d v%d.%d", CHANNEL_VERSION_STR, IOS_GetVersion(), IOS_GetRevisionMajor(),
+	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48,
+				  32, 0, CHANNEL_VERSION_STR,
+			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+
+	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
 	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
