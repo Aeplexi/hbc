@@ -59,7 +59,8 @@ typedef struct {
 
 		struct {
 			gfx_coordinates coords;
-			f32 scale;
+			f32 scale_x;
+			f32 scale_y;
 			f32 rad;
 			gfx_entity *entity;
 			u32 color;
@@ -86,7 +87,7 @@ void gfx_qe_origin_pop (gfx_queue_entry *entry);
 void gfx_qe_scissor_reset (gfx_queue_entry *entry);
 void gfx_qe_scissor (gfx_queue_entry *entry, u16 x, u16 y, u16 z, u16 w, u16 h);
 void gfx_qe_entity (gfx_queue_entry *entry, gfx_entity *entity, f32 x, f32 y,
-					s16 layer, u32 color);
+					s16 layer, u32 color, f32 scale_x, f32 scale_y );
 
 void gfx_frame_start (void);
 void gfx_frame_push (const gfx_queue_entry *entries, int count);

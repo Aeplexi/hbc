@@ -53,11 +53,11 @@ void cursors_queue (gfx_queue_entry *queue, cursor_type type, s16 x, s16 y,
 	gfx_qe_entity (&queue[0], cursors[type].tex[0],
 					x - cursors[type].hotspot_x + 2,
 					y - cursors[type].hotspot_y + 4, TEX_LAYER_CURSOR,
-					COL_DEFAULT);
+					COL_DEFAULT, 1.0f, 1.0f);
 	gfx_qe_entity (&queue[1], cursors[type].tex[1],
 					x - cursors[type].hotspot_x,
 					y - cursors[type].hotspot_y, TEX_LAYER_CURSOR + 1,
-					COL_DEFAULT);
+					COL_DEFAULT, 1.0f, 1.0f);
 
 	queue[0].entity.rad = roll;
 	queue[1].entity.rad = roll;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <math.h>
 
 #include <ogcsys.h>
 
@@ -25,7 +26,7 @@ u8 *cursor_shade_data;
 u32 cursor_shade_data_size;
 
 static gfx_queue_entry entry_bg;
-// static gfx_queue_entry entry_logo;
+static gfx_queue_entry entry_logo;
 static gfx_queue_entry entry_throbber;
 
 static gfx_entity gradient_subview;
@@ -42,16 +43,17 @@ static s8 rumble_timeout = -RUMBLE_DELAY;
 int score = 0;
 static int fading = 0;
 
-int viewing = 1;
+bool viewing = true;
 static gfx_queue_entry *sce = NULL;
 
 bool view_bubbles = false;
+bool view_fakelogo = false;
 
 bool egg = false;
 
 void view_init (void) {
 	cursor_enabled = false;
-	rumble_enabled = (CONF_GetPadMotorMode() == 0) ? 0 : 1;
+	rumble_enabled = (CONF_GetPadMotorMode() == 0) ? 0 : 1; // TODO: Maybe make this a setting when setting menu is added, current implementation could be "Auto"
 	throbber_enabled = false;
 
 	view_theme_reinit();
@@ -65,12 +67,13 @@ void view_deinit (void) {
 
 void view_theme_reinit(void) {
 	gfx_qe_entity(&entry_bg, theme_gfx[THEME_BACKGROUND],
-					0, 0, -3, COL_DEFAULT);
-	// gfx_qe_entity(&entry_logo, theme_gfx[THEME_LOGO], 0, 416, 0, COL_DEFAULT);
+					0, 0, -3, COL_DEFAULT, 1.0f, 1.0f);
+	gfx_qe_entity(&entry_logo, theme_gfx[THEME_LOGO],
+				  16, 416, 0, COL_DEFAULT, 1.0f, 1.0f);
 	gfx_qe_entity(&entry_throbber, theme_gfx[THEME_THROBBER],
 					(view_width - theme_gfx[THEME_THROBBER]->w) / 2,
 					(view_height - theme_gfx[THEME_THROBBER]->h) / 2,
-					0, COL_DEFAULT);
+					0, COL_DEFAULT, 1.0f, 1.0f);
 }
 
 view * view_new (u8 widget_count, const view *sub_view, s16 x, s16 y, s16 z,
@@ -128,7 +131,7 @@ static void view_push_view (const view *v, u32 subview_alpha) {
 							subview_alpha, subview_alpha, subview_alpha);
 
 		gfx_qe_entity (&entry_subview, &gradient_subview, -5, -5,
-						v->coords.z - 1, COL_DEFAULT);
+					   v->coords.z - 1, COL_DEFAULT, 1.0f, 1.0f);
 
 		gfx_frame_push (&entry_subview, 1);
 	}
@@ -248,26 +251,28 @@ void view_plot (view *v, u32 alpha, u32 *down, u32 *held, u32 *up) {
 	if (view_bubbles)
 		bubble_update(wm, x, y);
 
-	// gfx_frame_push (&entry_logo, 1);
+	if (view_fakelogo)
+		gfx_frame_push (&entry_logo, 1);
 
-		if(!viewing) {
-			char sct[20];
+	if (!viewing) {
+		char sct[20];
 
-			if (sce)
-				free(sce);
-
-			sprintf(sct, "Score: %08d", score);
-			int len = font_get_char_count (FONT_LABEL, sct, 200);
+		sprintf(sct, "Score: %08d", score);
+		int len = font_get_char_count (FONT_LABEL, sct, 200);
+		if (!sce)
 			sce = malloc (len * sizeof (gfx_queue_entry));
-			// widget_label (&v_m_main->widgets[], 48, 32, 0, buffer,
-						  // view_width / 3 * 2 - 32, FA_LEFT, FA_ASCENDER, FONT_LABEL);
-			font_plot_string (sce, len, FONT_LABEL, sct, 440, view_height - 48, TEX_LAYER_DIALOGS, view_width / 3 * 2 - 32, FA_LEFT, FA_ASCENDER);
-			gfx_frame_push (sce, len);
-		}
+		// widget_label (&v_m_main->widgets[], 48, 32, 0, buffer,
+						// view_width / 3 * 2 - 32, FA_LEFT, FA_ASCENDER, FONT_LABEL);
+		font_plot_string (sce, len, FONT_LABEL, sct, 440, view_height - 48, TEX_LAYER_DIALOGS, view_width / 3 * 2 - 32, FA_LEFT, FA_ASCENDER);
+		gfx_frame_push (sce, len);
+	} else {
+		if (sce)
+			free(sce);
+	}
 
-		if(viewing || fading) {
-			view_push_view (v, alpha);
-		}
+	if (viewing || fading) {
+		view_push_view (v, alpha);
+	}
 
 	if (throbber_enabled)
 		gfx_frame_push(&entry_throbber, 1);
@@ -322,7 +327,7 @@ void view_fade (view *v, s16 z, u32 c1, u32 c2, u32 c3, u32 c4, u8 steps,
 	view *vf;
 	u8 i;
 
-	if(viewing) {
+	if (viewing) {
 		vf = view_new (1, v, 0, 0, 0, 0);
 	} else {
 		vf = view_new (1, NULL, 0, 0, 0, 0);
@@ -439,5 +444,8 @@ void view_show_throbber(bool show) {
 
 void view_throbber_tickle(void) {
 	entry_throbber.entity.rad -= 0.1f;
+	while (entry_throbber.entity.rad < -M_TWOPI) {
+		entry_throbber.entity.rad += M_TWOPI;
+	}
 }
 

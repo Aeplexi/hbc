@@ -743,8 +743,8 @@ void font_plot_string (gfx_queue_entry *entries, int count, font_id id,
 
 		gfx_qe_entity (entries, glyph->texture,
 			((float)(cx + glyph->x)) * X_RATIO,
-			cy - glyph->y,
-			layer, theme_fonts[id].color);
+			cy - glyph->y, layer,
+			theme_fonts[id].color, 1.0f, 1.0f);
 
 		//gprintf("Render %d (%s) at %d %d -> %d %d size %d %d\n", mbc, utf8(mbc), cx, cy, cx + glyph->x, cy - glyph->y + fonts[id]->height, glyph->texture->w, glyph->texture->h);
 

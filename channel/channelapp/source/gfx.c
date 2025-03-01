@@ -262,12 +262,13 @@ void gfx_qe_scissor (gfx_queue_entry *entry, u16 x, u16 y, u16 z, u16 w, u16 h) 
 }
 
 void gfx_qe_entity (gfx_queue_entry *entry, gfx_entity *entity, f32 x, f32 y,
-					s16 layer, u32 color) {
+					s16 layer, u32 color, f32 scale_x, f32 scale_y ) {
 	entry->type = GFXQ_ENTITY;
 	entry->entity.coords.x = x;
 	entry->entity.coords.y = y + entity->h;
 	entry->entity.coords.z = layer;
-	entry->entity.scale = 1.0f;
+	entry->entity.scale_x = scale_x;
+	entry->entity.scale_y = scale_y;
 	entry->entity.rad = 0.0f;
 	entry->entity.entity = entity;
 	entry->entity.color = color;
@@ -328,8 +329,8 @@ static void plot_gradient (const gfx_queue_entry *entry, Mtx v) {
 	guMtxIdentity(m);
 	guMtxTransApply(m, m, -wf/2, -hf/2, 0);
 
-	if (entry->entity.scale != 1.0f) {
-		guMtxScale(m2, entry->entity.scale, entry->entity.scale, 0.0);
+	if ((entry->entity.scale_x != 1.0f) || (entry->entity.scale_y != 1.0f)) {
+		guMtxScale(m2, entry->entity.scale_x, entry->entity.scale_y, 0.0);
 		guMtxConcat(m2, m, m);
 	}
 
@@ -395,8 +396,8 @@ static void plot_texture (const gfx_queue_entry *entry, Mtx v) {
 	guMtxIdentity(m);
 	guMtxTransApply(m, m, -wf/2, -hf/2, 0);
 
-	if (entry->entity.scale != 1.0f) {
-		guMtxScale(m2, entry->entity.scale, entry->entity.scale, 0.0);
+	if ((entry->entity.scale_x != 1.0f) || (entry->entity.scale_y != 1.0f)) {
+		guMtxScale(m2, entry->entity.scale_x, entry->entity.scale_y, 0.0);
 		guMtxConcat(m2, m, m);
 	}
 

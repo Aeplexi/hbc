@@ -35,7 +35,7 @@ static bubble sub_bubbles[MAX_BUBBLE_COUNT][BUBBLE_POP_MAX];
 static int bubble_count = -1;
 
 extern int score;
-extern int viewing;
+extern bool viewing;
 
 static void bubble_rand(int i) {
 	int tex;
@@ -53,10 +53,12 @@ static void bubble_rand(int i) {
 	bubbles[i].tex = tex;
 
 	gfx_qe_entity(&entries_bubbles[i], tex_bubbles[tex], bubbles[i].x,
-					bubbles[i].py, -2, COL_DEFAULT);
+					bubbles[i].py, -2, COL_DEFAULT, 1.0f, 1.0f);
 
-	entries_bubbles[i].entity.scale = BUBBLE_SIZE_MIN +
+	entries_bubbles[i].entity.scale_x = BUBBLE_SIZE_MIN +
 				FRAND (BUBBLE_SIZE_MAX - BUBBLE_SIZE_MIN);
+	entries_bubbles[i].entity.scale_y = entries_bubbles[i].entity.scale_x;
+
 	entries_bubbles[i].entity.rad = FRAND (M_PI_4);
 }
 
@@ -132,11 +134,13 @@ static void bubble_pop(int i) {
 
 		gfx_qe_entity (&entries_sub_bubbles[i][j], tex_bubbles[tex],
 						sub_bubbles[i][j].x, sub_bubbles[i][j].py,
-						-2, COL_DEFAULT);
+						-2, COL_DEFAULT, 1.0f, 1.0f);
 
-		entries_sub_bubbles[i][j].entity.scale = (BUBBLE_POP_SIZE_MIN +
+		entries_sub_bubbles[i][j].entity.scale_x = (BUBBLE_POP_SIZE_MIN +
 					FRAND (BUBBLE_POP_SIZE_MAX - BUBBLE_POP_SIZE_MIN)) *
-					entries_bubbles[i].entity.scale;
+					entries_bubbles[i].entity.scale_x;
+		entries_sub_bubbles[i][j].entity.scale_y = entries_sub_bubbles[i][j].entity.scale_x;
+
 		entries_sub_bubbles[i][j].entity.rad = entries_bubbles[i].entity.rad;
 	}
 }
@@ -168,7 +172,7 @@ void bubble_update(bool wm, s32 x, s32 y) {
 
 	for (i = 0; i < bubble_count; ++i) {
 		coords = &entries_bubbles[i].entity.coords;
-		radius = entries_bubbles[i].entity.scale *
+		radius = entries_bubbles[i].entity.scale_y *
 					entries_bubbles[i].entity.entity->w / 2 * BUBBLE_POP_RADIUS;
 		if (!bubbles[i].popped && wm) {
 			float cx = coords->x + entries_bubbles[i].entity.entity->w/2;
@@ -182,7 +186,7 @@ void bubble_update(bool wm, s32 x, s32 y) {
 
 			for (j = 0; j < bubbles[i].popcnt; j++) {
 				coords = &entries_sub_bubbles[i][j].entity.coords;
-				radius = entries_sub_bubbles[i][j].entity.scale *
+				radius = entries_sub_bubbles[i][j].entity.scale_y *
 						entries_sub_bubbles[i][j].entity.entity->w / 2 *
 						BUBBLE_POP_RADIUS;
 

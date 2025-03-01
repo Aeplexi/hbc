@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <ogc/machine/processor.h>
-#include <ogc/isfs.h>
 #include <ogcsys.h>
 #include <network.h>
 
@@ -10,7 +9,6 @@
 #include "view.h"
 #include "loader.h"
 #include "i18n.h"
-#include "panic.h"
 #include "m_main.h"
 #include "wiiinfo.h"
 #include "nand.h"
@@ -25,112 +23,12 @@ static const char *text_no_ip;
 static const char *text_has_ip;
 
 static bool bootmii_ios = false;
-static bool vwii = false;
 static bool priiloader = false;
 
-static bool bootmii_is_installed(u64 title_id) {
-	u32 tmd_view_size;
-	u8 *tmdbuf;
-	bool ret;
+enum menuindex menu_index = MENU_HOME;
+enum menuindex parent_menu = MENU_HOME;
 
-	if (ES_GetTMDViewSize(title_id, &tmd_view_size) < 0)
-		return false;
-
-	if (tmd_view_size < 90)
-		return false;
-
-	if (tmd_view_size > 1024)
-		return false;
-
-	tmdbuf = pmemalign(32, 1024);
-
-	if (ES_GetTMDView(title_id, tmdbuf, tmd_view_size) < 0) {
-		free(tmdbuf);
-		return false;
-	}
-
-	if (tmdbuf[50] == 'B' && tmdbuf[51] == 'M')
-		ret = true;
-	else
-		ret = false;
-
-	free(tmdbuf);
-
-	return ret;
-}
-
-static u32 GetSysMenuBootContent(void)
-{
-	s32 ret;
-	u32 cid = 0;
-	u32 size = 0;
-	signed_blob *s_tmd = NULL;
-
-	ret = ES_GetStoredTMDSize(0x100000002LL, &size);
-	if (!size)
-	{
-		printf("Error! ES_GetStoredTMDSize failed (ret=%i)\n", ret);
-		return 0;
-	}
-
-	s_tmd = memalign(32, size);
-	if (!s_tmd)
-	{
-		printf("Error! Memory allocation failed!\n");
-		return 0;
-	}
-
-	ret = ES_GetStoredTMD(0x100000002LL, s_tmd, size);
-	if (ret < 0)
-	{
-		printf("Error! ES_GetStoredTMD failed (ret=%i)\n", ret);
-		free(s_tmd);
-		return 0;
-	}
-
-	tmd *p_tmd = SIGNATURE_PAYLOAD(s_tmd);
-
-	for (int i = 0; i < p_tmd->num_contents; i++)
-	{
-		tmd_content* content = &p_tmd->contents[i];
-		if (content->index == p_tmd->boot_index)
-		{
-			cid = content->cid;
-			break;
-		}
-	}
-
-	free(s_tmd);
-	if (!cid) printf("Error! Cannot find system menu boot content!\n");
-
-	return cid;
-}
-
-bool GetSysMenuExecPath(char path[ISFS_MAXPATH], bool mainDOL)
-{
-	u32 cid = GetSysMenuBootContent();
-	if (!cid) return false;
-
-	if (mainDOL) cid |= 0x10000000;
-	sprintf(path, "/title/00000001/00000002/content/%08x.app", cid);
-
-	return true;
-}
-
-bool priiloader_is_installed()
-{
-	char path[ISFS_MAXPATH] ATTRIBUTE_ALIGN(0x20);
-
-	if (!GetSysMenuExecPath(path, true))
-		return false;
-
-	u32 size = 0;
-	NANDGetFileSize(path, &size);
-
-	return (size > 0);
-}
-
-// todo: move to diff file!
+// TODO: move to diff file!
 
 struct system_menu_version {
 	u16 number;
@@ -179,15 +77,15 @@ struct system_menu_version version_table[] = {
 	{449, "4.1U"},
 	{481, "4.2U"},
 	{512, "4.3J"},
-	{513, "4.3U"}, // technically 4.3 is vWii 1.0.0 but it's gonna be too rare for somebody to be on that anyways probably
-	{544, "4.3J (Wii U 4.0.0J)"},
-	{545, "4.3U (Wii U 4.0.0U)"},
-	{546, "4.3E (Wii U 4.0.0E)"},
-	{608, "4.3J (Wii U 5.2.0J)"},
-	{609, "4.3U (Wii U 5.2.0U)"},
-	{610, "4.3E (Wii U 5.2.0E)"},
-	{4609, "4.3U (Wii mini)"},
-	{4610, "4.3E (Wii mini)"}
+	{513, "4.3U"},
+	{544, "4.3J"},
+	{545, "4.3U"},
+	{546, "4.3E"},
+	{608, "4.3J"},
+	{609, "4.3U"},
+	{610, "4.3E"},
+	{4609, "4.3U"},
+	{4610, "4.3E"}
 };
 
 char* get_system_menu_version_string(u16 number) {
@@ -202,7 +100,7 @@ char* get_system_menu_version_string(u16 number) {
 	return "Unknown"; // no system menu version installed, or weird patched one?
 }
 
-static u16 get_tmd_version(u64 title) {
+u16 get_tmd_version(u64 title) {
 	STACK_ALIGN(u8, tmdbuf, 1024, 32);
 	u32 tmd_view_size = 0;
 	s32 res;
@@ -224,9 +122,8 @@ static u16 get_tmd_version(u64 title) {
 static bool inited_widgets = false;
 
 view * m_main_init (void) {
-	bootmii_ios = bootmii_is_installed(TITLEID_BOOTMII);
-	priiloader = priiloader_is_installed(TITLEID_SYSMENU);
-	vwii = IS_VWII;
+	bootmii_ios = bootmii_ios_is_installed(TITLEID_BOOTMII);
+	priiloader = priiloader_is_installed();
 
 	v_m_main = view_new (9, NULL, 0, 0, 0, 0);
 
@@ -244,8 +141,12 @@ void m_main_deinit(void) {
 	v_m_main = NULL;
 }
 
+int button_y_offset(int y, int multiplier) {
+	return y + theme_gfx[THEME_BUTTON]->h * multiplier / 2;
+}
+
 void m_main_theme_reinit(void) {
-	u16 x, y, yadd;
+	u16 x, y = 0, yadd = 0, extra_buttons = 0;
 	int i;
 	char buffer[50];
 
@@ -256,58 +157,78 @@ void m_main_theme_reinit(void) {
 		for (i = 0; i < v_m_main->widget_count; ++i)
 			widget_free(&v_m_main->widgets[i]);
 
-	// it's only theoretically possible for one of these to be true: the user is running on a vWii or they have BootMii IOS installed.
-	if (bootmii_ios || vwii)
-		if (priiloader)
-			yadd = 8;
-	else
-		yadd = 16;
-	else if (priiloader)
-		yadd = 16;
-	else
-		yadd = 32;
-
 	x = (view_width - theme_gfx[THEME_BUTTON]->w) / 2;
-	y = 80;
+	switch (menu_index) {
+		// it's only theoretically possible for one of these to be true: the user is running on a vWii or they have BootMii IOS installed.
 
-	widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL, _("Back"));
-	y += theme_gfx[THEME_BUTTON]->h + yadd;
-	widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL, _("About"));
-	y += theme_gfx[THEME_BUTTON]->h + yadd;
+		case MENU_HOME:
+			parent_menu = MENU_HOME;
 
-	if (bootmii_ios) {
-		widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-					   _("Launch BootMii IOS"));
-		y += theme_gfx[THEME_BUTTON]->h + yadd;
-	} else if (vwii) {
-		widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-					   _("Return to Wii U Menu"));
-		y += theme_gfx[THEME_BUTTON]->h + yadd;
+			yadd = 32;
+			y = button_y_offset(80, 1);
+			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+						   _("Settings"));
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+						   _("System Info"));
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
+						   _("About"));
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
+						   _("Exit"));
+			break;
+		case MENU_EXIT:
+			parent_menu = MENU_HOME;
+
+			yadd = 32 * 2 / ( 3 + extra_buttons );
+			extra_buttons = bootmii_ios + priiloader;
+			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + 24;
+			if (bootmii_ios) {
+				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+							   _("Launch BootMii IOS"));
+				y += theme_gfx[THEME_BUTTON]->h + yadd;
+			}
+
+			if (priiloader) {
+				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+							   _("Launch Priiloader"));
+				y += theme_gfx[THEME_BUTTON]->h + yadd;
+			}
+
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
+						   _("Exit to System Menu"));
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			if (IS_VWII) {
+				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
+							   _("Reboot to Wii U Menu"));
+			} else {
+				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
+							   _("Reboot"));
+			}
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
+						   _("Shutdown"));
+			break;
 	}
-
-	if (priiloader) {
-		widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-					   _("Launch Priiloader"));
-		y += theme_gfx[THEME_BUTTON]->h + yadd;
-	}
-
-	widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL, _("Exit to System Menu"));
-	y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-	widget_button (&v_m_main->widgets[5], x, y, 0, BTN_NORMAL, _("Shutdown"));
 
 	// HBC and IOS version
 
 	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48,
 				  32, 0, CHANNEL_VERSION_STR,
-			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
 	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
-				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	inited_widgets = true;
 }

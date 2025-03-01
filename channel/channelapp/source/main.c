@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <locale.h>
 #include <ctype.h>
+#include <network.h>
 
 #include <ogcsys.h>
 #include <ogc/machine/processor.h>
@@ -60,8 +61,8 @@ extern const u8 stub_bin[];
 extern const u8 stub_bin_end;
 extern const u32 stub_bin_size;
 
-u64 *conf_magic = STUB_ADDR_MAGIC;
-u64 *conf_title_id = STUB_ADDR_TITLE;
+static u64 *conf_magic = STUB_ADDR_MAGIC;
+// static u64 *conf_title_id = STUB_ADDR_TITLE;
 
 static bool should_exit;
 static bool shutdown;
@@ -70,8 +71,17 @@ static bool gdb;
 #endif
 static const char *text_delete;
 static const char *text_error_delete;
+static const char *text_wired;
+static const char *text_wireless;
+static const char *text_not_connected;
+static const char *string_sysinfo;
 
-extern int viewing;
+extern enum menuindex menu_index;
+extern enum menuindex parent_menu;
+
+extern bool viewing;
+
+extern bool show_fakelogo;
 
 extern bool egg;
 
@@ -251,10 +261,22 @@ static void main_pre(void) {
 	dialogs_init();
 }
 
-static void load_text(void)
-{
+static void load_text(void) {
 	text_delete = _("Do you really want to delete this application?");
 	text_error_delete = _("Error deleting '%s'");
+	text_wired = _("Wired");
+	text_wireless = _("Wireless");
+	text_not_connected = _("Not Connected");
+	string_sysinfo =
+		"S/N: %s\n"
+		"Console: %s (%s)\n"
+		"Hollywood version: v0x%x\n"
+		"Hardware region: %s\n"
+		"Area: %s\n\n"
+		"System Menu: %s (v%u)\n"
+		"Priiloader: %s\n"
+		// "BootMii (boot2): Not implemented\n"
+		"BootMii (IOS): %s";
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -305,6 +327,13 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
+	char sysinfo_buf[500]; // TODO: find the theoretical maximum size
+	char code[14];
+	char region[4];
+	char model_number[13];
+	char bootmii_ver[5];
+
+	bootmii_ios_version(TITLEID_BOOTMII, bootmii_ver);
 
 	load_text();
 
@@ -355,6 +384,9 @@ void main_real(void) {
 	view_fade(v_current, TEX_LAYER_CURSOR + 1, 0xff, 0xff, 0xff, 0xff, 31, -8);
 
 	view_enable_cursor (true);
+
+	u16 system_menu_tmd_version = get_tmd_version(0x0000000100000002ll);
+	char* system_menu_version_string = get_system_menu_version_string(system_menu_tmd_version);
 
 	while (!should_exit) {
 #ifdef GDBSTUB
@@ -419,7 +451,9 @@ void main_real(void) {
 
 		if ((bd & PADS_HOME) && viewing) {
 			if (v_current == v_browser) {
-				m_main_update ();
+				menu_index = MENU_HOME;
+				m_main_theme_reinit();
+				m_main_update();
 				v_current = v_m_main;
 				view_set_focus (v_m_main, 0);
 
@@ -433,9 +467,15 @@ void main_real(void) {
 		}
 
 		if ((v_current == v_m_main) && viewing) {
+			view_fakelogo = true;
 			if (bd & PADS_B) {
-				v_current = v_browser;
-
+				if (menu_index == MENU_HOME) {
+					v_current = v_browser;
+				} else {
+					menu_index = parent_menu;
+					m_main_theme_reinit();
+					m_main_update();
+				}
 				continue;
 			}
 
@@ -446,52 +486,73 @@ void main_real(void) {
 				view_set_focus_next (v_current);
 
 			if (bd & PADS_A) {
-				switch (v_m_main->focus) {
-				case 0:
-					v_current = v_browser;
-					continue;
+				if (menu_index == MENU_HOME) {
+					switch (v_m_main->focus) {
+						case 0:
+							show_message(v_current, DLGMT_ERROR, DLGB_OK,
+										"Unimplemented", 0);
+							continue;
 
-				case 1:
-					v_about = dialog_about (v_m_main);
-					v_current = v_about;
+						case 1:
+							get_serial(code);
+							get_hardware_region(region);
+							get_model_number(model_number);
+							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
+									 model_number, (*(vu32*)0x80003138), region, get_area(),
+									 system_menu_version_string, system_menu_tmd_version,
+									 priiloader_is_installed() ? "Installed" : "Not installed",
+									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
+							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
+										 sysinfo_buf, 0);
+							continue;
 
-					view_enable_cursor (false);
+						case 2:
+							v_about = dialog_about (v_m_main);
+							v_current = v_about;
 
-					dialog_fade (v_current, true);
+							view_enable_cursor (false);
 
-					exit_about = false;
+							dialog_fade (v_current, true);
 
-					continue;
-				// either launch bootmii or reboot the console, depending on if a vwii is detected
-				case 2:
-					if (IS_VWII)
-					{
-						reboot_console = true;
-						should_exit = true;
+							exit_about = false;
+
+							continue;
+
+						case 3:
+							menu_index = MENU_EXIT;
+							m_main_theme_reinit();
+							m_main_update();
+							continue;
 					}
-					else {
-						launch_bootmii = true;
+				} else if (menu_index == MENU_EXIT) {
+					switch (v_m_main->focus) {
+						case 0:
+							launch_bootmii = true;
+							should_exit = true;
+							break;
+						case 1:
+							launch_priiloader = true;
+						case 2:
+							should_exit = true;
+							continue;
+						case 3:
+							reboot_console = true;
+							should_exit = true;
+							break;
+						case 4:
+							should_exit = true;
+							shutdown = true;
+							break;
 					}
-					should_exit = true;
-					break;
-				case 3:
-					launch_priiloader = true;
-					should_exit = true;
-				case 4:
-					should_exit = true;
-					continue;
-
-				case 5:
-					should_exit = true;
-					shutdown = true;
-					break;
 				}
-			}
 
 			continue;
+			}
 		}
 
 		if (v_current == v_browser) {
+			view_fakelogo = false;
+
 			widget_set_flag (&v_browser->widgets[2], WF_ENABLED,
 								loader_gecko_initialized ());
 
@@ -554,28 +615,24 @@ void main_real(void) {
 
 				if (bd & PADS_A) {
 					clicked = view_widget_at_ir (v_browser);
+					switch (clicked) {
+						case 0:
+							browser_gen_view(BA_PREV, NULL);
+							continue;
 
-					if (clicked == 0) {
-						browser_gen_view(BA_PREV, NULL);
-						continue;
-					}
+						case 1:
+							browser_gen_view(BA_NEXT, NULL);
+							continue;
 
-					if (clicked == 1) {
-						browser_gen_view(BA_NEXT, NULL);
-						continue;
-					}
+						case 3:
+							loader_tcp_init ();
+							continue;
 
-					if (clicked == 3) {
-						loader_tcp_init ();
-						continue;
-					}
-
-					if (clicked == 4) {
-						egg_counter++;
-						if (egg_counter >= 69)
-							egg = true;
-						else
-						continue;
+						case 4:
+							egg_counter++;
+							if (egg_counter >= 69)
+								egg = true;
+							continue;
 					}
 
 					app_sel = browser_sel();

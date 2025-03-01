@@ -10,13 +10,15 @@ typedef enum {
 	DLGMT_INFO = 0,
 	DLGMT_CONFIRM,
 	DLGMT_WARNING,
-	DLGMT_ERROR
+	DLGMT_ERROR,
+	DLGMT_SYSINFO
 } dialog_message_type;
 
 typedef enum {
 	DLGB_OK,
 	DLGB_OKCANCEL,
-	DLGB_YESNO
+	DLGB_YESNO,
+	DLGB_NONE
 } dialog_message_buttons;
 
 typedef struct {

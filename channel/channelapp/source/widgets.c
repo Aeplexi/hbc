@@ -76,7 +76,7 @@ void widget_set_progress (widget *w, u32 progress) {
 						112 - 36 * 2 + 2, theme.progress.ul, theme.progress.ur,
 						theme.progress.lr, theme.progress.ll);
 	gfx_qe_entity (&w->layers[0].gfx_entries[0], w->progress.gradient, 35, 35,
-					0, COL_DEFAULT);
+					0, COL_DEFAULT, 1.0f, 1.0f);
 
 	sprintf (p, "%3.f%%", roundf (100.0 * m));
 	font_plot_string (&w->layers[2].gfx_entries[0], 4, FONT_LABEL, p,
@@ -202,7 +202,7 @@ void widget_image(widget *w, s16 x, s16 y, s16 z, gfx_entity *image,
 	l->gfx_entry_count = 1;
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
-	gfx_qe_entity (&l->gfx_entries[0], image, 0, 0, 0, COL_DEFAULT);
+	gfx_qe_entity (&l->gfx_entries[0], image, 0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	c++;
 
@@ -213,7 +213,7 @@ void widget_image(widget *w, s16 x, s16 y, s16 z, gfx_entity *image,
 		l->gfx_entry_count = 1;
 		l->gfx_entries = (gfx_queue_entry *) pmalloc (l->gfx_entry_count *
 							sizeof (gfx_queue_entry));
-		gfx_qe_entity (&l->gfx_entries[0], image_disabled, 0, 0, 1, COL_DEFAULT);
+		gfx_qe_entity (&l->gfx_entries[0], image_disabled, 0, 0, 1, COL_DEFAULT, 1.0f, 1.0f);
 
 		c++;
 	}
@@ -225,7 +225,7 @@ void widget_image(widget *w, s16 x, s16 y, s16 z, gfx_entity *image,
 		l->gfx_entry_count = 1;
 		l->gfx_entries = (gfx_queue_entry *) pmalloc (l->gfx_entry_count *
 							sizeof (gfx_queue_entry));
-		gfx_qe_entity (&l->gfx_entries[0], image_cursor, 0, 0, 2, COL_DEFAULT);
+		gfx_qe_entity (&l->gfx_entries[0], image_cursor, 0, 0, 2, COL_DEFAULT, 1.0f, 1.0f);
 	}
 }
 
@@ -262,7 +262,7 @@ void widget_button (widget *w, s16 x, s16 y, s16 z, button_size size,
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
-	gfx_qe_entity (&l->gfx_entries[0], tex, 0, 0, 0, COL_DEFAULT);
+	gfx_qe_entity (&l->gfx_entries[0], tex, 0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	l = &w->layers[1];
 	l->flags = WF_ENABLED;
@@ -271,7 +271,7 @@ void widget_button (widget *w, s16 x, s16 y, s16 z, button_size size,
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
-	gfx_qe_entity (&l->gfx_entries[0], tex, 0, 0, 0, WIDGET_DISABLED_COLOR);
+	gfx_qe_entity (&l->gfx_entries[0], tex, 0, 0, 0, WIDGET_DISABLED_COLOR, 1.0f, 1.0f);
 
 	l = &w->layers[2];
 	l->flags = WF_FOCUSED | WF_FLAGS_AND | WF_ENABLED;
@@ -279,7 +279,7 @@ void widget_button (widget *w, s16 x, s16 y, s16 z, button_size size,
 	l->gfx_entry_count = 1;
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
-	gfx_qe_entity (&l->gfx_entries[0], tex_focus, 0, 0, 0, COL_DEFAULT);
+	gfx_qe_entity (&l->gfx_entries[0], tex_focus, 0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	l = &w->layers[3];
 	l->flags = 0;
@@ -342,7 +342,7 @@ void widget_grid_app_entry(widget *w, s16 x, s16 y, s16 z,
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_GRID_APP_ENTRY],
-					0, 0, 0, COL_DEFAULT);
+					0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	l = &w->layers[1];
 	l->flags = WF_ENABLED;
@@ -352,7 +352,7 @@ void widget_grid_app_entry(widget *w, s16 x, s16 y, s16 z,
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_GRID_APP_ENTRY],
-					0, 0, 0, WIDGET_DISABLED_COLOR);
+					0, 0, 0, WIDGET_DISABLED_COLOR, 1.0f, 1.0f);
 
 	l = &w->layers[2];
 	l->flags = WF_FOCUSED | WF_FLAGS_AND | WF_ENABLED;
@@ -361,7 +361,7 @@ void widget_grid_app_entry(widget *w, s16 x, s16 y, s16 z,
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_GRID_APP_ENTRY_FOCUS],
-					0, 0, 0, COL_DEFAULT);
+					0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	if (entry->icon) {
 		l = &w->layers[3];
@@ -374,7 +374,7 @@ void widget_grid_app_entry(widget *w, s16 x, s16 y, s16 z,
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
 		gfx_qe_entity (&l->gfx_entries[0], entry->icon, GRID_APP_ENTRY_ICON_X,
-						APP_ENTRY_ICON_Y, 1, COL_DEFAULT);
+						APP_ENTRY_ICON_Y, 1, COL_DEFAULT, 1.0f, 1.0f);
 	}
 }
 
@@ -396,7 +396,7 @@ void widget_app_entry (widget *w, s16 x, s16 y, s16 z, const app_entry *entry) {
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_APP_ENTRY],
-					0, 0, 0, COL_DEFAULT);
+					0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	l = &w->layers[1];
 	l->flags = WF_ENABLED;
@@ -406,7 +406,7 @@ void widget_app_entry (widget *w, s16 x, s16 y, s16 z, const app_entry *entry) {
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_APP_ENTRY],
-					0, 0, 0, WIDGET_DISABLED_COLOR);
+					0, 0, 0, WIDGET_DISABLED_COLOR, 1.0f, 1.0f);
 
 	l = &w->layers[2];
 	l->flags = WF_FOCUSED | WF_FLAGS_AND | WF_ENABLED;
@@ -415,7 +415,7 @@ void widget_app_entry (widget *w, s16 x, s16 y, s16 z, const app_entry *entry) {
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_APP_ENTRY_FOCUS],
-					0, 0, 0, COL_DEFAULT);
+					0, 0, 0, COL_DEFAULT, 1.0f, 1.0f);
 
 	line1 = NULL;
 	line2 = NULL;
@@ -459,7 +459,8 @@ void widget_app_entry (widget *w, s16 x, s16 y, s16 z, const app_entry *entry) {
 
 	if (entry->icon)
 		gfx_qe_entity (&l->gfx_entries[l1 + l2], entry->icon,
-						APP_ENTRY_ICON_X, APP_ENTRY_ICON_Y, 1, COL_DEFAULT);
+					   APP_ENTRY_ICON_X, APP_ENTRY_ICON_Y, 1,
+					   COL_DEFAULT, 1.0f, 1.0f);
 }
 
 void widget_progress (widget *w, s16 x, s16 y, s16 z, const char *caption,
@@ -482,7 +483,7 @@ void widget_progress (widget *w, s16 x, s16 y, s16 z, const char *caption,
 	l->gfx_entries = (gfx_queue_entry *)
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 	gfx_qe_entity (&l->gfx_entries[0], theme_gfx[THEME_PROGRESS],
-					0, 0, 1, COL_DEFAULT);
+					0, 0, 1, COL_DEFAULT, 1.0f, 1.0f);
 
 	int chars = font_get_char_count(FONT_LABEL, caption,
 									theme_gfx[THEME_PROGRESS]->w - 64);
@@ -519,7 +520,7 @@ void widget_gradient (widget *w, s16 x, s16 y, s16 z,
 						pmalloc (l->gfx_entry_count * sizeof (gfx_queue_entry));
 
 	gfx_qe_entity (&l->gfx_entries[0], w->gradient.gradient, 0, 0, 0,
-					COL_DEFAULT);
+					COL_DEFAULT, 1.0f, 1.0f);
 }
 
 void widget_memo (widget *w, s16 x, s16 y, s16 z, u16 width, u16 height,
