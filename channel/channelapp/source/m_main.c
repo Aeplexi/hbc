@@ -184,7 +184,7 @@ void m_main_theme_reinit(void) {
 		case MENU_EXIT:
 			parent_menu = MENU_HOME;
 
-			yadd = 32 * 2 / ( 3 + extra_buttons );
+			yadd = 32 * 2 / 5 ^ extra_buttons;
 			extra_buttons = bootmii_ios + priiloader;
 			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + 24;
 			if (bootmii_ios) {
