@@ -14,17 +14,17 @@
 #include "http.h"
 #include "i18n.h"
 #include "sha1.h"
-#include "ecdsa.h"
+// #include "ecdsa.h"
 
 #include "update.h"
 
-#define		UPDATE_HEADER		"SIG0"
-#define		UPDATE_OFFSET_R		4
-#define		UPDATE_OFFSET_S		4+30
-#define		UPDATE_OFFSET_XML	64
+// #define		UPDATE_HEADER		"SIG0"
+// #define		UPDATE_OFFSET_R		4
+// #define		UPDATE_OFFSET_S		4+30
+// #define		UPDATE_OFFSET_XML	64
 
 
-static const u8 update_key[] = UPDATE_PUBLIC_KEY;
+// static const u8 update_key[] = UPDATE_PUBLIC_KEY;
 
 static u8 nibble2hex(u8 byte)
 {
@@ -66,8 +66,8 @@ static void *update_func(void *arg) {
 	update_arg *ua = (update_arg *) arg;
 
 	SHA1(ua->sha_data, ua->sha_len, hash);
-	if (check_ecdsa(update_key, ua->ecdsa_r, ua->ecdsa_s, hash))
-		ua->valid = true;
+	// if (check_ecdsa(update_key, ua->ecdsa_r, ua->ecdsa_s, hash))
+	// 	ua->valid = true;
 
 	ua->running = false;
 	return NULL;
@@ -122,26 +122,26 @@ bool update_busy(bool *update_available) {
 		if (http_result != HTTPR_OK)
 			return false;
 
-		gprintf("fetched update xml\n");
+		// gprintf("fetched update xml\n");
+  //
+		// if (update_len < 64) {
+		// 	gprintf("update.sxml length is invalid\n");
+		// 	free(update_data);
+		// 	return false;
+		// }
+  //
+		// if (memcmp(UPDATE_HEADER, update_data, 4)) {
+		// 	gprintf("SIG0 header not found.\n");
+		// 	free(update_data);
+		// 	return false;
+		// }
 
-		if (update_len < 64) {
-			gprintf("update.sxml length is invalid\n");
-			free(update_data);
-			return false;
-		}
-
-		if (memcmp(UPDATE_HEADER, update_data, 4)) {
-			gprintf("SIG0 header not found.\n");
-			free(update_data);
-			return false;
-		}
-
-		memset(&ta_ua, 0, sizeof(ta_ua));
-		ta_ua.sha_data = update_data + UPDATE_OFFSET_XML;
-		ta_ua.sha_len = update_len - UPDATE_OFFSET_XML;
-		ta_ua.ecdsa_r = update_data + UPDATE_OFFSET_R;
-		ta_ua.ecdsa_s = update_data + UPDATE_OFFSET_S;
-		ta_ua.running = true;
+		// memset(&ta_ua, 0, sizeof(ta_ua));
+		// ta_ua.sha_data = update_data + UPDATE_OFFSET_XML;
+		// ta_ua.sha_len = update_len - UPDATE_OFFSET_XML;
+		// ta_ua.ecdsa_r = update_data + UPDATE_OFFSET_R;
+		// ta_ua.ecdsa_s = update_data + UPDATE_OFFSET_S;
+		// ta_ua.running = true;
 
 		memset(&update_stack, 0, UPDATE_THREAD_STACKSIZE);
 		LWP_InitQueue(&update_queue);
@@ -167,15 +167,15 @@ bool update_busy(bool *update_available) {
 
 	us = UPDATE_NO_UPDATE;
 
-	if (!ta_ua.valid) {
-		gprintf("update.sxml signature is invalid.\n");
-		free(update_data);
-		return false;
-	}
+	// if (!ta_ua.valid) {
+	// 	gprintf("update.sxml signature is invalid.\n");
+	// 	free(update_data);
+	// 	return false;
+	// }
 
-	gprintf("update.sxml signature is valid.\n");
+	// gprintf("update.sxml signature is valid.\n");
 
-	info = update_parse((char *) update_data + UPDATE_OFFSET_XML);
+	info = update_parse((char *) update_data);
 	free(update_data);
 
 	if (!info) {
