@@ -88,7 +88,7 @@ void dialogs_theme_reinit (void) {
 		"souLLy (ENOTHERE) - banner graphics\n"
 		"drmr (EMORECOWBELL) - banner audio, channel graphics\n"
 		"mha (E404) - update server and hosting\n\n"
-		"aep (EWII) - forking and adding features\n";
+		"aep (EWII) - forking and adding features\n"
 		"korbo (EONFIRE) - extra icons, menus\n";
 
 	string_about_post =
