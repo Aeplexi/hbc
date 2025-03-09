@@ -139,7 +139,7 @@ static void * http_func (void *arg) {
 		r += sprintf (r, "GET %s HTTP/1.1\r\n", ta->path);
 		r += sprintf (r, "Host: %s\r\n", ta->host);
 		r += sprintf (r, "Cache-Control: no-cache\r\n");
-		r += sprintf (r, "User-Agent: TheHomebrewChannel/%s Wii/%08lx"
+		r += sprintf (r, "User-Agent: TheHomebrewChannel/%s Wii/%08x"
 						" (%u; %u; %s-%s)\r\n", CHANNEL_VERSION_STR,
 						ng_id, ms_id, ta->sysmenu_version, ta->region,
 						ta->area);
