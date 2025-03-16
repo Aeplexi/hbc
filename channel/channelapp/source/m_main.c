@@ -215,6 +215,14 @@ void m_main_theme_reinit(void) {
 			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
 						   _("Shutdown"));
 			break;
+		case MENU_SETTINGS:
+			parent_menu = MENU_HOME;
+
+			yadd = 32 * 2 / 5;
+			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) + 24;
+			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+						   _("Reset Theme"));
+			break;
 	}
 
 	// HBC and IOS version

@@ -489,10 +489,10 @@ void main_real(void) {
 				if (menu_index == MENU_HOME) {
 					switch (v_m_main->focus) {
 						case 0:
-							show_message(v_current, DLGMT_ERROR, DLGB_OK,
-										"Unimplemented", 0);
+							menu_index = MENU_SETTINGS;
+							m_main_theme_reinit();
+							m_main_update();
 							continue;
-
 						case 1:
 							get_serial(code);
 							get_hardware_region(region);
@@ -542,6 +542,13 @@ void main_real(void) {
 						case 4:
 							should_exit = true;
 							shutdown = true;
+							break;
+					}
+				} else if (menu_index == MENU_SETTINGS) {
+					switch (v_m_main->focus) {
+						case 0: // Reset Theme
+							delete_theme();
+							refresh_theme(v_current, app_sel, NULL, 0);
 							break;
 					}
 				}

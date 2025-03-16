@@ -10,6 +10,7 @@ enum menuindex {
 	MENU_OPTIONS_1,
 	MENU_OPTIONS_2,
 	MENU_EXIT,
+	MENU_SETTINGS
 };
 
 extern enum menuindex menu_index;
