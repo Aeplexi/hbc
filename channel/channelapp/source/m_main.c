@@ -13,6 +13,7 @@
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
+#include "panic.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
@@ -141,12 +142,8 @@ void m_main_deinit(void) {
 	v_m_main = NULL;
 }
 
-int button_y_offset(int y, int multiplier) {
-	return y + theme_gfx[THEME_BUTTON]->h * multiplier / 2;
-}
-
 void m_main_theme_reinit(void) {
-	u16 x, y = 0, yadd = 0, extra_buttons = 0;
+	u16 x, y = 0, yadd = 0, button_count = 0;
 	int i;
 	char buffer[50];
 
@@ -158,14 +155,15 @@ void m_main_theme_reinit(void) {
 			widget_free(&v_m_main->widgets[i]);
 
 	x = (view_width - theme_gfx[THEME_BUTTON]->w) / 2;
+	y = 80 + (theme_gfx[THEME_BUTTON]->h / 2);
+
 	switch (menu_index) {
-		// it's only theoretically possible for one of these to be true: the user is running on a vWii or they have BootMii IOS installed.
 
 		case MENU_HOME:
 			parent_menu = MENU_HOME;
 
-			yadd = 32;
-			y = button_y_offset(80, 1);
+			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
+
 			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 						   _("Settings"));
 			y += theme_gfx[THEME_BUTTON]->h + yadd;
@@ -184,9 +182,21 @@ void m_main_theme_reinit(void) {
 		case MENU_EXIT:
 			parent_menu = MENU_HOME;
 
-			yadd = 32 * 2 / 5 ^ extra_buttons;
-			extra_buttons = bootmii_ios + priiloader;
-			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) * extra_buttons + 24;
+			button_count = 3 + bootmii_ios + priiloader;
+
+			if (button_count == 3) {
+				button_count = 5;
+				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
+				y += theme_gfx[THEME_BUTTON]->h + yadd;
+			} else if (button_count == 2) {
+				button_count = 4;
+				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
+				y += theme_gfx[THEME_BUTTON]->h + yadd;
+			} else {
+				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
+			}
+			// if you need to have 1 button in a menu, something's seriously wrong with either you or your way of thinking
+
 			if (bootmii_ios) {
 				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 							   _("Launch BootMii IOS"));
