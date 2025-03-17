@@ -186,11 +186,11 @@ void m_main_theme_reinit(void) {
 
 			if (button_count == 3) {
 				button_count = 5;
-				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
+				yadd = theme_gfx[THEME_BUTTON]->h/4;
 				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			} else if (button_count == 2) {
 				button_count = 4;
-				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
+				yadd = theme_gfx[THEME_BUTTON]->h*2/3;
 				y += theme_gfx[THEME_BUTTON]->h + yadd;
 			} else {
 				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
