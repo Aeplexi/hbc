@@ -142,6 +142,10 @@ void m_main_deinit(void) {
 	v_m_main = NULL;
 }
 
+int button_y_offset(int y, int multiplier) {
+	return y + theme_gfx[THEME_BUTTON]->h * multiplier / 2;
+}
+
 void m_main_theme_reinit(void) {
 	u16 x, y = 0, yadd = 0, button_count = 0;
 	int i;
@@ -229,9 +233,22 @@ void m_main_theme_reinit(void) {
 			parent_menu = MENU_HOME;
 
 			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-			y = 80 + (theme_gfx[THEME_BUTTON]->h / 2);
+			y = button_y_offset(80, 2) - (theme_gfx[THEME_BUTTON]->h / 2) + 24;
+
 			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 						   _("Reset Theme"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+						   _("Sound"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
+						   _("Miscellaneous"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
 			break;
 	}
 
