@@ -229,7 +229,7 @@ void m_main_theme_reinit(void) {
 			parent_menu = MENU_HOME;
 
 			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-			y = 104;
+			y = 80 + (theme_gfx[THEME_BUTTON]->h / 2);
 			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
 						   _("Reset Theme"));
 			break;
