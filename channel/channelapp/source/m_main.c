@@ -13,7 +13,6 @@
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
-#include "panic.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
