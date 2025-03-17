@@ -548,6 +548,8 @@ void main_real(void) {
 					switch (v_m_main->focus) {
 						case 0: // Reset Theme
 							delete_theme();
+							menu_index = parent_menu;
+							v_current = v_browser;
 							refresh_theme(v_current, app_sel, NULL, 0);
 							break;
 					}
