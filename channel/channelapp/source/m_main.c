@@ -230,6 +230,7 @@ void m_main_theme_reinit(void) {
 						   _("Shutdown"));
 			break;
 		case MENU_SETTINGS:
+			// Settings Menu
 			parent_menu = MENU_HOME;
 
 			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
