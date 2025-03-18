@@ -13,6 +13,7 @@
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
+#include "panic.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
@@ -223,6 +224,27 @@ void m_main_theme_reinit(void) {
 
 			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
 						   _("Shutdown"));
+			break;
+		case MENU_SETTINGS:
+			// Settings Menu
+			parent_menu = MENU_HOME;
+
+			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
+
+			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
+						   _("Reset Theme"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
+						   _("Sound"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
+						   _("Miscellaneous"));
+
+			y += theme_gfx[THEME_BUTTON]->h + yadd;
 			break;
 	}
 

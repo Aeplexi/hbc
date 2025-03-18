@@ -476,3 +476,15 @@ bool theme_is_valid_fn(const char *filename) {
 	return theme_get_index(&index, &ws, filename);
 }
 
+void delete_theme() {
+	const char *titlepath;
+	STACK_ALIGN(char, fn, ISFS_MAXPATH, 32);
+
+	titlepath = title_get_path();
+	if (titlepath[0])
+		sprintf(fn, "%s/%s", titlepath, app_fn_theme);
+	else
+		fn[0] = 0;
+
+	ISFS_Delete(fn); // Needs testing, hopefully shouldn't brick Wii's? Just deleting the theme.zip in the Homebrew Channel savedata? -- Aep
+}
