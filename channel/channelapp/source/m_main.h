@@ -7,10 +7,8 @@
 
 enum menuindex {
 	MENU_HOME = 0,
-	MENU_OPTIONS_1,
-	MENU_OPTIONS_2,
-	MENU_EXIT,
-	MENU_SETTINGS
+	MENU_SETTINGS,
+	MENU_EXIT
 };
 
 extern enum menuindex menu_index;

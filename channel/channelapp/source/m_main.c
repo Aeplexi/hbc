@@ -13,7 +13,7 @@
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
-#include "panic.h"
+#include "menus.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
@@ -143,7 +143,7 @@ void m_main_deinit(void) {
 }
 
 void m_main_theme_reinit(void) {
-	u16 x, y = 0, yadd = 0, button_count = 0;
+	u16 x, y = 0, yadd = 0;
 	int i;
 	char buffer[50];
 
@@ -158,108 +158,31 @@ void m_main_theme_reinit(void) {
 	y = 80 + (theme_gfx[THEME_BUTTON]->h / 2);
 
 	switch (menu_index) {
-
-		case MENU_HOME:
+		case MENU_HOME: // Home
 			parent_menu = MENU_HOME;
-
-			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-
-			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
-						   _("Settings"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
-						   _("System Info"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-						   _("About"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-						   _("Exit"));
+			menu_home(v_m_main, x, y, yadd);
 			break;
-		case MENU_EXIT:
+		case MENU_EXIT: // Exit
 			parent_menu = MENU_HOME;
-
-			button_count = 3 + bootmii_ios + priiloader;
-
-			if (button_count == 3) {
-				button_count = 5;
-				yadd = theme_gfx[THEME_BUTTON]->h/4;
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			} else if (button_count == 2) {
-				button_count = 4;
-				yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			} else {
-				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
-			}
-			// if you need to have 1 button in a menu, something's seriously wrong with either you or your way of thinking
-
-			if (bootmii_ios) {
-				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
-							   _("Launch BootMii IOS"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			}
-
-			if (priiloader) {
-				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
-							   _("Launch Priiloader"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			}
-
-			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-						   _("Exit to System Menu"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			if (IS_VWII) {
-				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							   _("Reboot to Wii U Menu"));
-			} else {
-				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							   _("Reboot"));
-			}
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
-						   _("Shutdown"));
+			menu_exit(v_m_main, x, y, yadd, bootmii_ios, priiloader);
 			break;
-		case MENU_SETTINGS:
-			// Settings Menu
+		case MENU_SETTINGS:	// Settings
 			parent_menu = MENU_HOME;
-
-			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-
-			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
-						   _("Reset Theme"));
-
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
-						   _("Sound"));
-
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-						   _("Miscellaneous"));
-
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-			break;
+			menu_settings(v_m_main, x, y, yadd);
 	}
 
 	// HBC and IOS version
 
 	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48,
 				  32, 0, CHANNEL_VERSION_STR,
-				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+				  view_width / 3, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
 	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
-			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+			   view_width / 3, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	inited_widgets = true;
 }
