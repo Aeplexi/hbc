@@ -16,6 +16,7 @@ extern enum menuindex parent_menu;
 
 view * m_main_init (void);
 void m_main_deinit (void);
+void m_main_gen_view (void);
 void m_main_theme_reinit (void);
 
 void m_main_update (void);

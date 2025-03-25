@@ -452,7 +452,7 @@ void main_real(void) {
 		if ((bd & PADS_HOME) && viewing) {
 			if (v_current == v_browser) {
 				menu_index = MENU_HOME;
-				m_main_theme_reinit();
+				m_main_gen_view();
 				m_main_update();
 				v_current = v_m_main;
 				view_set_focus (v_m_main, 0);
@@ -473,7 +473,7 @@ void main_real(void) {
 					v_current = v_browser;
 				} else {
 					menu_index = parent_menu;
-					m_main_theme_reinit();
+					m_main_gen_view();
 					m_main_update();
 				}
 				continue;
@@ -490,7 +490,7 @@ void main_real(void) {
 					switch (v_m_main->focus) {
 						case 0:
 							menu_index = MENU_SETTINGS;
-							m_main_theme_reinit();
+							m_main_gen_view();
 							m_main_update();
 							continue;
 						case 1:
@@ -520,7 +520,7 @@ void main_real(void) {
 
 						case 3:
 							menu_index = MENU_EXIT;
-							m_main_theme_reinit();
+							m_main_gen_view();
 							m_main_update();
 							continue;
 					}

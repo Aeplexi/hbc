@@ -143,12 +143,14 @@ void m_main_deinit(void) {
 }
 
 void m_main_theme_reinit(void) {
+	text_no_ip = _("Network not initialized");
+	text_has_ip = _("Your Wii's IP is %u.%u.%u.%u");
+}
+
+void m_main_gen_view(void) {
 	u16 x, y = 0, yadd = 0;
 	int i;
 	char buffer[50];
-
-	text_no_ip = _("Network not initialized");
-	text_has_ip = _("Your Wii's IP is %u.%u.%u.%u");
 
 	if (inited_widgets)
 		for (i = 0; i < v_m_main->widget_count; ++i)
