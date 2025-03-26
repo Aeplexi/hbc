@@ -84,4 +84,9 @@ void menu_settings(view *m_view, int x, int y, int yadd) {
 
 	widget_button (&m_view->widgets[2], x, y, 0, BTN_NORMAL,
 				   _("Miscellaneous"));
+
+	y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+	widget_button (&m_view->widgets[3], x, y, 0, BTN_NORMAL,
+				   _("Menu Test"));
 }

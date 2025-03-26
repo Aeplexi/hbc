@@ -35,6 +35,7 @@ static const char *caption_delete;
 static const char *caption_load;
 static const char *caption_back;
 static const char *caption_options;
+static const char *caption_settings_titles[SETM_COUNT];
 static const char *caption_device;
 static const char *caption_device_names[DEVICE_COUNT];
 static const char *caption_sort_by;
@@ -66,6 +67,10 @@ void dialogs_theme_reinit (void) {
 	caption_load = _("Load");
 	caption_back = _("Back");
 	caption_options = _("Options");
+	caption_settings_titles[0] = _("Theme");
+	caption_settings_titles[1] = _("Sound");
+	caption_settings_titles[2] = _("Miscellaneous");
+	caption_settings_titles[3] = _("Menu Test");
 	caption_device = _("Device:");
 	caption_device_names[0] = _("Internal SD Slot");
 	caption_device_names[1] = _("USB device");
@@ -486,6 +491,89 @@ s8 show_message (const view *sub_view, dialog_message_type type,
 }
 
 #define DLG_DEV_FIRST 4
+
+void show_settings_dialog(const view *sub_view, settings_menu menu) {
+	view *v;
+	u32 bd;
+
+	app_entry_poll_status(true);
+
+	v = view_new (16, sub_view, (view_width - theme_gfx[THEME_DIALOG]->w) / 2,
+				  44, TEX_LAYER_DIALOGS, PADS_B);
+
+	widget_image (&v->widgets[0], 0, 0, 0, theme_gfx[THEME_DIALOG],
+				  NULL, false, NULL);
+	widget_label (&v->widgets[1], 32, 16, 1, caption_settings_titles[menu],
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_CENTERED, FA_ASCENDER, FONT_DLGTITLE);
+
+	widget_label (&v->widgets[2], 52, 60, 1, "Option 1",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+	widget_label (&v->widgets[3], 268, 60, 1, "Option 2",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+	widget_label (&v->widgets[4], 52, 132, 1, "Option 3",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+	widget_label (&v->widgets[5], 268, 132, 1, "Option 4",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+	widget_label (&v->widgets[6], 52, 204, 1, "Option 5",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+	widget_label (&v->widgets[7], 268, 204, 1, "Option 6",
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_LEFT, FA_DESCENDER, FONT_LABEL);
+
+	widget_button (&v->widgets[8], 52, 64, 1, BTN_SMALL, "Button 1");
+	widget_button (&v->widgets[9], 268, 64, 1, BTN_SMALL, "Button 2");
+	widget_button (&v->widgets[10], 52, 136, 1, BTN_SMALL, "Button 3");
+	widget_button (&v->widgets[11], 268, 136, 1, BTN_SMALL, "Button 4");
+	widget_button (&v->widgets[12], 52, 208, 1, BTN_SMALL, "Button 5");
+	widget_button (&v->widgets[13], 268, 208, 1, BTN_SMALL, "Button 6");
+
+
+	widget_button (&v->widgets[14], 32,
+				   theme_gfx[THEME_DIALOG]->h -
+				   theme_gfx[THEME_BUTTON_SMALL]->h - 16 , 1, BTN_SMALL,
+				caption_ok);
+	widget_button (&v->widgets[15], theme_gfx[THEME_DIALOG]->w -
+	theme_gfx[THEME_BUTTON_SMALL]->w - 32,
+	theme_gfx[THEME_DIALOG]->h -
+	theme_gfx[THEME_BUTTON_SMALL]->h - 16 , 1, BTN_SMALL,
+	caption_back);
+
+	view_set_focus (v, 15);
+
+	dialog_fade (v, true);
+
+	while (true) {
+		view_plot (v, DIALOG_MASK_COLOR, &bd, NULL, NULL);
+
+		if (bd & PADS_LEFT)
+			view_set_focus_prev (v);
+
+		if (bd & PADS_RIGHT)
+			view_set_focus_next (v);
+
+		if (bd & PADS_UP)
+			if (v->focus == view_move_focus(v, -2))
+				view_move_focus(v, -4);
+
+		if (bd & PADS_DOWN)
+			if (v->focus == view_move_focus(v, 2))
+				view_move_focus(v, 4);
+
+		if (bd & (PADS_B | PADS_1))
+			break;
+
+		if ((bd & PADS_A) && (v->focus != -1)) {
+			if (v->focus >= 14)
+				break;
+		}
+	}
+
+	if ((bd & PADS_A) && (v->focus == 14))
+		gprintf("confirm handler here");
+
+	dialog_fade (v, false);
+
+	view_free (v);
+}
 
 dialog_options_result show_options_dialog(const view *sub_view) {
 	u32 frame = 0;

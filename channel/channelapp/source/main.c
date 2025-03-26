@@ -552,6 +552,15 @@ void main_real(void) {
 							v_current = v_browser;
 							refresh_theme(v_current, app_sel, NULL, 0);
 							break;
+						case 1: // Sound
+							show_settings_dialog(v_current, SETM_SOUND);
+							break;
+						case 2: // Miscellaneous
+							show_settings_dialog(v_current, SETM_MISC);
+							break;
+						case 3: // Menu Test
+							show_settings_dialog(v_current, SETM_TEST);
+							break;
 					}
 				}
 

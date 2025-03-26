@@ -27,6 +27,14 @@ typedef struct {
 	app_sort sort;
 } dialog_options_result;
 
+typedef enum {
+	SETM_THEME = 0,
+	SETM_SOUND,
+	SETM_MISC,
+	SETM_TEST,
+	SETM_COUNT
+} settings_menu;
+
 extern u16 width_dialog, height_dialog;
 
 void dialogs_init (void);
@@ -43,6 +51,7 @@ view * dialog_about (const view *sub_view);
 s8 show_message (const view *sub_view, dialog_message_type type,
 					dialog_message_buttons buttons, const char *text, u8 focus);
 dialog_options_result show_options_dialog(const view *sub_view);
+void show_settings_dialog(const view *sub_view, settings_menu menu);
 
 #endif
 
