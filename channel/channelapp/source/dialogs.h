@@ -36,6 +36,13 @@ typedef enum {
 } settings_menu;
 
 extern u16 width_dialog, height_dialog;
+extern const char *caption_ok;
+extern const char *caption_cancel;
+extern const char *caption_yes;
+extern const char *caption_no;
+extern const char *caption_delete;
+extern const char *caption_load;
+extern const char *caption_back;
 
 void dialogs_init (void);
 void dialogs_theme_reinit (void);
