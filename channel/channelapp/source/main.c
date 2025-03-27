@@ -590,7 +590,7 @@ void main_real(void) {
 			}
 #endif
 			if (viewing) {
-				if ((bd & PADS_1) && !(bh & WPAD_BUTTON_2 << 16)) {
+				if ((bd & PADS_1) && !(bh & WPAD_BUTTON_2 << 16) && !loading) {
 					dialog_options_result options;
 					options = show_options_dialog(v_current);
 
