@@ -50,7 +50,6 @@ static int device_prefered = -1;
 static app_filter current_filter = APP_FILTER_ALL;
 static app_sort current_sort = APP_SORT_NAME;
 static bool cmp_descending = false;
-static bool cmp_release_date = false;
 
 static int cmp_app_entry (const void *p1, const void *p2) {
 	const app_entry *a1;
@@ -73,7 +72,7 @@ static int cmp_app_entry (const void *p1, const void *p2) {
 	if (a1->meta && !a2->meta)
 		return -1;
 
-	if (cmp_release_date) {
+	if (current_sort == APP_SORT_DATE) {
 		if (!a1->meta->release_date && !a2->meta->release_date)
 			return 0;
 
@@ -87,6 +86,10 @@ static int cmp_app_entry (const void *p1, const void *p2) {
 			return 1;
 
 		return -1;
+	}
+
+	if (current_sort == APP_SORT_SIZE) {
+		return a2->size - a1->size;
 	}
 
 	if (!a1->meta->name && !a2->meta->name)
@@ -146,14 +149,16 @@ void app_entry_set_sort(app_sort sort) {
 	switch (sort) {
 	case APP_SORT_DATE:
 		cmp_descending = true;
-		cmp_release_date = true;
 		current_filter = APP_FILTER_DATEONLY;
 		current_sort = APP_SORT_DATE;
 		break;
 
+	case APP_SORT_SIZE:
+		current_sort = APP_SORT_SIZE;
+		break;
+
 	default:
 		cmp_descending = false;
-		cmp_release_date = false;
 		current_filter = APP_FILTER_ALL;
 		current_sort = APP_SORT_NAME;
 		break;
@@ -405,7 +410,7 @@ static void *ae_func (void *arg) {
 
 		switch (ta->cmd) {
 		case AE_CMD_SCAN:
-			
+
 			if (device_active >= 0) {
 				if (!ta->umount && devices[device_active].device->isInserted())
 					continue;
@@ -710,4 +715,3 @@ bool app_entry_is_loading(void) {
 
 	return ta_ae.loading;
 }
-
