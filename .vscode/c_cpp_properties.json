@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "linux-gcc-x64",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/opt/devkitpro/libogc/include/**",
+        "/opt/devkitpro/devkitPPC/include/**",
+        "/opt/devkitpro/devkitPPC/powerpc-eabi/include/**"
+      ],
+      "compilerPath": "/opt/devkitpro/devkitPPC/bin/powerpc-eabi-gcc",
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        ""
+      ]
+    }
+  ],
+  "version": 4
+}
