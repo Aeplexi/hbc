@@ -81,7 +81,7 @@ extern enum menuindex parent_menu;
 
 extern bool viewing;
 
-extern bool show_fakelogo;
+extern bool view_fakelogo;
 
 extern bool egg;
 
@@ -452,16 +452,18 @@ void main_real(void) {
 		if ((bd & PADS_HOME) && viewing) {
 			if (v_current == v_browser) {
 				menu_index = MENU_HOME;
+				browser_gen_view(BA_REMOVE, NULL);
 				m_main_gen_view();
-				m_main_update();
 				v_current = v_m_main;
 				view_set_focus (v_m_main, 0);
 
 				continue;
 			} else {
-				if (v_current == v_m_main)
+				if (v_current == v_m_main) {
+					m_main_fade(false);
 					v_current = v_browser;
-
+					browser_gen_view(BA_REFRESH, NULL);
+				}
 				continue;
 			}
 		}
@@ -469,12 +471,13 @@ void main_real(void) {
 		if ((v_current == v_m_main) && viewing) {
 			view_fakelogo = true;
 			if (bd & PADS_B) {
+				m_main_fade(false);
 				if (menu_index == MENU_HOME) {
 					v_current = v_browser;
+					browser_gen_view(BA_REFRESH, NULL);
 				} else {
 					menu_index = parent_menu;
 					m_main_gen_view();
-					m_main_update();
 				}
 				continue;
 			}
@@ -490,8 +493,8 @@ void main_real(void) {
 					switch (v_m_main->focus) {
 						case 0:
 							menu_index = MENU_SETTINGS;
+							m_main_fade(false);
 							m_main_gen_view();
-							m_main_update();
 							continue;
 						case 1:
 							get_serial(code);
@@ -520,8 +523,8 @@ void main_real(void) {
 
 						case 3:
 							menu_index = MENU_EXIT;
+							m_main_fade(false);
 							m_main_gen_view();
-							m_main_update();
 							continue;
 					}
 				} else if (menu_index == MENU_EXIT) {
@@ -549,6 +552,8 @@ void main_real(void) {
 						case 0: // Reset Theme
 							delete_theme();
 							menu_index = parent_menu;
+							m_main_fade(false);
+							browser_gen_view(BA_REFRESH, NULL);
 							v_current = v_browser;
 							refresh_theme(v_current, app_sel, NULL, 0);
 							break;
