@@ -528,6 +528,18 @@ dialog_options_result show_options_dialog(const view *sub_view) {
 
 	app_entry_poll_status(true);
 
+	device = app_entry_get_status(status);
+	if(device < 0) {
+		// Apps are still loading!
+		return ret;
+	}
+
+	sort = app_entry_get_sort();
+
+	ret.confirmed = false;
+	ret.device = device;
+	ret.sort = sort;
+
 	v = view_new (12, sub_view, (view_width - theme_gfx[THEME_DIALOG]->w) / 2,
 					44, TEX_LAYER_DIALOGS, PADS_B);
 
@@ -558,13 +570,6 @@ dialog_options_result show_options_dialog(const view *sub_view) {
 					theme_gfx[THEME_DIALOG]->h -
 					theme_gfx[THEME_BUTTON_SMALL]->h - 16 , 1, BTN_SMALL,
 					caption_back);
-
-	device = app_entry_get_status(status);
-	sort = app_entry_get_sort();
-
-	ret.confirmed = false;
-	ret.device = device;
-	ret.sort = sort;
 
 	for (i = 0; i < DEVICE_COUNT; ++i) {
 		if (i == device)
