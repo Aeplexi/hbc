@@ -72,10 +72,10 @@ void menu_exit(view *m_view, int x, int y, int yadd, bool bootmii_ios, bool prii
 }
 
 void menu_settings(view *m_view, int x, int y, int yadd) {
-	yadd = theme_gfx[THEME_BUTTON]->h*2/3;
+	yadd = theme_gfx[THEME_BUTTON]->h/4;
 
 	widget_button (&m_view->widgets[0], x, y, 0, BTN_NORMAL,
-				   _("Reset Theme"));
+				   _("Theme"));
 
 	y += theme_gfx[THEME_BUTTON]->h + yadd;
 
@@ -85,12 +85,17 @@ void menu_settings(view *m_view, int x, int y, int yadd) {
 	y += theme_gfx[THEME_BUTTON]->h + yadd;
 
 	widget_button (&m_view->widgets[2], x, y, 0, BTN_NORMAL,
-				   _("Miscellaneous"));
+				   _("Language"));
 
 	y += theme_gfx[THEME_BUTTON]->h + yadd;
 
 	widget_button (&m_view->widgets[3], x, y, 0, BTN_NORMAL,
-				   _("Menu Test"));
+				   _("Parental Controls"));
+
+	y += theme_gfx[THEME_BUTTON]->h + yadd;
+
+	widget_button (&m_view->widgets[4], x, y, 0, BTN_NORMAL,
+				   _("Miscellaneous"));
 }
 
 void submenu_menutest(view *v) {

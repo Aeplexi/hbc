@@ -30,6 +30,8 @@ typedef struct {
 typedef enum {
 	SETM_THEME = 0,
 	SETM_SOUND,
+	SETM_LANG,
+	SETM_PARENTAL,
 	SETM_MISC,
 	SETM_TEST,
 	SETM_COUNT

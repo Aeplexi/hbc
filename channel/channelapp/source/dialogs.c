@@ -70,8 +70,10 @@ void dialogs_theme_reinit (void) {
 	caption_options = _("Options");
 	caption_settings_titles[0] = _("Theme");
 	caption_settings_titles[1] = _("Sound");
-	caption_settings_titles[2] = _("Miscellaneous");
-	caption_settings_titles[3] = _("Menu Test");
+	caption_settings_titles[2] = _("Language");
+	caption_settings_titles[3] = _("Parental Controls");
+	caption_settings_titles[4] = _("Miscellaneous");
+	caption_settings_titles[5] = _("Menu Test");
 	caption_device = _("Device:");
 	caption_device_names[0] = _("Internal SD Slot");
 	caption_device_names[1] = _("USB device");

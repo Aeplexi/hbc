@@ -549,7 +549,7 @@ void main_real(void) {
 					}
 				} else if (menu_index == MENU_SETTINGS) {
 					switch (v_m_main->focus) {
-						case 0: // Reset Theme
+						case 0: // Theme (currently resets theme)
 							delete_theme();
 							menu_index = parent_menu;
 							m_main_fade(false);
@@ -560,15 +560,17 @@ void main_real(void) {
 						case 1: // Sound
 							show_settings_dialog(v_current, SETM_SOUND);
 							break;
-						case 2: // Miscellaneous
-							show_settings_dialog(v_current, SETM_MISC);
+						case 2: // Language
+							show_settings_dialog(v_current, SETM_LANG);
 							break;
-						case 3: // Menu Test
+						case 3: // Parental Controls
+							show_settings_dialog(v_current, SETM_PARENTAL);
+							break;
+						case 4: // Miscellaneous (currently Menu Test)
 							show_settings_dialog(v_current, SETM_TEST);
 							break;
 					}
 				}
-
 			continue;
 			}
 		}
