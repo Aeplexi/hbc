@@ -74,7 +74,11 @@ static const char *text_error_delete;
 static const char *text_wired;
 static const char *text_wireless;
 static const char *text_not_connected;
-static const char *string_sysinfo;
+static const char *text_sysinfo;
+static const char *text_installed;
+static const char *text_not_installed;
+static const char *area_names[14];
+static const char *model_names[6];
 
 extern enum menuindex menu_index;
 extern enum menuindex parent_menu;
@@ -266,8 +270,8 @@ static void load_text(void) {
 	text_error_delete = _("Error deleting '%s'");
 	text_wired = _("Wired");
 	text_wireless = _("Wireless");
-	text_not_connected = _("Not Connected");
-	string_sysinfo =
+	text_not_connected = _("Not connected");
+	text_sysinfo = _(
 		"S/N: %s\n"
 		"Console: %s (%s)\n"
 		"Hollywood version: v0x%x\n"
@@ -276,7 +280,31 @@ static void load_text(void) {
 		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
 		// "BootMii (boot2): Not implemented\n"
-		"BootMii (IOS): %s";
+		"BootMii (IOS): %s");
+	text_installed = _("Installed");
+	text_not_installed = _("Not installed");
+
+	area_names[0] = _("Japan");
+	area_names[1] = _("United States");
+	area_names[2] = _("Europe");
+	area_names[3] = _("Australia");
+	area_names[4] = _("Brazil");
+	area_names[5] = _("Taiwan");
+	area_names[6] = _("Republic of China");
+	area_names[7] = _("Korea");
+	area_names[8] = _("Hong Kong");
+	area_names[9] = _("Asia");
+	area_names[10] = _("Latin America");
+	area_names[11] = _("South Africa");
+	area_names[12] = _("China (ique wtf?)");
+	area_names[13] = _("unknown");
+
+	model_names[0] = _("Wii");
+	model_names[1] = _("Wii Family Edition");
+	model_names[2] = _("Wii Mini");
+	model_names[3] = _("Wii U");
+	model_names[4] = _("Dolphin");
+	model_names[5] = _("NDEV");
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -332,6 +360,7 @@ void main_real(void) {
 	char region[4];
 	char model_number[13];
 	char bootmii_ver[5];
+	s32 area = CONF_GetArea();
 
 	bootmii_ios_version(TITLEID_BOOTMII, bootmii_ver);
 
@@ -500,11 +529,11 @@ void main_real(void) {
 							get_serial(code);
 							get_hardware_region(region);
 							get_model_number(model_number);
-							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
-									 model_number, (*(vu32*)0x80003138), region, get_area(),
+							snprintf(sysinfo_buf, 300, text_sysinfo, code, model_names[get_wii_model()],
+									 model_number, (*(vu32*)0x80003138), region, area_names[area],
 									 system_menu_version_string, system_menu_tmd_version,
-									 priiloader_is_installed() ? "Installed" : "Not installed",
-									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
+									 priiloader_is_installed() ? text_installed : text_not_installed,
+									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : text_not_installed);
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										 sysinfo_buf, 0);
 							continue;
