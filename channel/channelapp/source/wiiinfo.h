@@ -22,4 +22,5 @@ void get_model_number(char* model_setting);
 bool priiloader_is_installed(void);
 bool bootmii_ios_is_installed(u64 title_id);
 void bootmii_ios_version(u64 title_id, char* outbuf);
+bool is_oct_31st();
 #endif

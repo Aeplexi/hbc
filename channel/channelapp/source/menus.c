@@ -1,5 +1,6 @@
-#include "menus.h"
+#include <string.h>
 
+#include "menus.h"
 #include "controls.h"
 #include "dialogs.h"
 #include "i18n.h"
@@ -42,15 +43,30 @@ void menu_exit(view *m_view, int x, int y, int yadd, bool bootmii_ios, bool prii
 	}
 	// if you need to have 1 button in a menu, something's seriously wrong with either you or your way of thinking
 
+	// also easter egg time
+
+	char bootmii_ios_string[21];
+	char priiloader_string[21];
+
+	if (is_oct_31st()) {
+		strcpy(bootmii_ios_string, "Launch BrickMii IOS");
+		strcpy(priiloader_string, "Launch Briickloader");
+	}
+	else {
+		strcpy(bootmii_ios_string, "Launch BootMii IOS");
+		strcpy(priiloader_string, "Launch Priiloader");
+	}
+
+
 	if (bootmii_ios) {
 		widget_button (&m_view->widgets[0], x, y, 0, BTN_NORMAL,
-					   _("Launch BootMii IOS"));
+					   _(bootmii_ios_string));
 		y += theme_gfx[THEME_BUTTON]->h + yadd;
 	}
 
 	if (priiloader) {
 		widget_button (&m_view->widgets[1], x, y, 0, BTN_NORMAL,
-					   _("Launch Priiloader"));
+					   _(priiloader_string));
 		y += theme_gfx[THEME_BUTTON]->h + yadd;
 	}
 

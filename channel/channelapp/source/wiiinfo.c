@@ -4,6 +4,7 @@
 #include <ogc/es.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <time.h>
 
 #include "wiiinfo.h"
 #include "../config.h"
@@ -239,4 +240,20 @@ bool priiloader_is_installed(void) {
 	NANDGetFileSize(path, &size);
 
 	return (size > 0);
+}
+
+// time for easter egg :)
+bool is_oct_31st() {
+	struct tm today;
+	time_t rawtime;
+	time(&rawtime);
+	today = *localtime(&rawtime);
+
+	gprintf("current date %2.2d/%2.2d/%4.4d", today.tm_mon + 1, today.tm_mday, today.tm_year + 1900);
+
+	if (today.tm_mon + 1 == 10 && today.tm_mday == 31) // October 31st (any year)
+	{
+		return true;
+	}
+	return false;
 }
