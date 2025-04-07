@@ -39,6 +39,7 @@ MACHDEP = -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float
 CFLAGS = $(MACHDEP) -Os -Wall -DBASE_ADDR=$(BASE_ADDR) $(DIR_INCLUDES:%=-I%)
 # check for DEBUG_APP variable (DEBUG_APP=1 make)
 ifeq (DEBUG_APP,1)
+        $(MAKE) clean
 	CFLAGS += -DDEBUG_APP
 endif
 
@@ -46,6 +47,7 @@ endif
 CFLAGS_STUB = $(MACHDEP) -O2 -Wall -DBASE_ADDR=$(BASE_ADDR) $(DIR_INCLUDES:%=-I%)
 # check for DEBUG_STUB variable (DEBUG_STUB=1 make)
 ifeq (DEBUG_STUB,1)
+        $(MAKE) clean
 	CFLAGS_STUB += -DDEBUG_STUB
 endif
 
