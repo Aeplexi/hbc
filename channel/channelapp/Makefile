@@ -37,18 +37,16 @@ LIBS = mxml freetype png bz2 z db fat wiiuse bte ogc m
 
 MACHDEP = -g -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float
 CFLAGS = $(MACHDEP) -Os -Wall -DBASE_ADDR=$(BASE_ADDR) $(DIR_INCLUDES:%=-I%)
-# check for DEBUG_APP variable (DEBUG_APP=1 make)
-ifeq (DEBUG_APP,1)
-        rm -f $(DIR_BUILD)/*.o
-	CFLAGS += -DDEBUG_APP
+# check for DEBUG_APP variable (make DEBUG_APP=1)
+ifeq ($(DEBUG_APP),1)
+CFLAGS += -DDEBUG_APP
 endif
 
 # using -Os for the stub makes it dependent on libgcc
 CFLAGS_STUB = $(MACHDEP) -O2 -Wall -DBASE_ADDR=$(BASE_ADDR) $(DIR_INCLUDES:%=-I%)
-# check for DEBUG_STUB variable (DEBUG_STUB=1 make)
-ifeq (DEBUG_STUB,1)
-        rm -f $(DIR_BUILD)/*.o
-	CFLAGS_STUB += -DDEBUG_STUB
+# check for DEBUG_STUB variable (make DEBUG_STUB=1)
+ifeq ($(DEBUG_STUB),1)
+CFLAGS_STUB += -DDEBUG_STUB
 endif
 
 ASFLAGS = -D_LANGUAGE_ASSEMBLY -DHW_RVL
