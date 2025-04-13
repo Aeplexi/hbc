@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <ogc/machine/processor.h>
 #include "title.h"
 
 u32 ng_id = 0;
@@ -13,6 +14,25 @@ static u64 title_id = 0;
 static char title_path[ISFS_MAXPATH] __attribute__((aligned(0x20)));
 
 static u8 buf[0x1000] __attribute__((aligned(0x20)));
+
+u16 get_tmd_version(u64 title) {
+	STACK_ALIGN(u8, tmdbuf, 1024, 32);
+	u32 tmd_view_size = 0;
+	s32 res;
+
+	res = ES_GetTMDViewSize(title, &tmd_view_size);
+	if (res < 0)
+		return 0;
+
+	if (tmd_view_size > 1024)
+		return 0;
+
+	res = ES_GetTMDView(title, tmdbuf, tmd_view_size);
+	if (res < 0)
+		return 0;
+
+	return (tmdbuf[88] << 8) | tmdbuf[89];
+}
 
 static void title_get_ngid(void) {
 	s32 res;
