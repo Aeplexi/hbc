@@ -327,7 +327,7 @@ void main_real(void) {
 	bool exit_about;
 
 	char charbuf[PATH_MAX];
-	char sysinfo_buf[500]; // TODO: find the theoretical maximum size
+	char sysinfo_buf[215]; // should be the theoretical maximum characters
 	char code[14];
 	char region[4];
 	char model_number[13];
