@@ -23,4 +23,6 @@ bool priiloader_is_installed(void);
 bool bootmii_ios_is_installed(u64 title_id);
 void bootmii_ios_version(u64 title_id, char* outbuf);
 bool is_oct_31st();
+char* get_system_menu_version_string(u16 number);
+
 #endif
