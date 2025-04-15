@@ -19,6 +19,80 @@ static int dolphin_fd = ~0;
 
 extern int __CONF_GetTxt(const char *name, char *buf, int length);
 
+struct system_menu_version {
+	u16 number;
+	char* string;
+};
+
+static const struct system_menu_version version_table[] = {
+	// sorted by version
+	{0, "Prelaunch 0!?"},
+	{1, "Prelaunch 1??"},
+	{33, "1.0U"},
+	{34, "1.0E"},
+	{64, "1.0J"},
+	{66, "1.0E?"}, // not listed in wiibrew??
+	{97, "2.0U"},
+	{128, "2.0J"},
+	{130, "2.0E"},
+	{162, "2.1E"},
+	{192, "2.2J"},
+	{193, "2.2U"},
+	{194, "2.2E"},
+	{224, "3.0J"},
+	{225, "3.0U"},
+	{226, "3.0E"},
+	{256, "3.1J"},
+	{257, "3.1U"},
+	{258, "3.1E"},
+	{288, "3.2J"},
+	{289, "3.2U"},
+	{290, "3.2E"},
+	{326, "3.3K"},
+	{352, "3.3J"},
+	{353, "3.3U"},
+	{354, "3.3E"},
+	{384, "3.4J"},
+	{385, "3.4U"},
+	{386, "3.4E"},
+	{390, "3.5K"},
+	{416, "4.0J"},
+	{417, "4.0U"},
+	{418, "4.0E"},
+	{448, "4.1J"},
+	{449, "4.1U"},
+	{450, "4.1E"},
+	{454, "4.1K"},
+	{480, "4.2J"},
+	{481, "4.2U"},
+	{482, "4.2E"},
+	{486, "4.2K"},
+	{512, "4.3J"},
+	{513, "4.3U"},
+	{514, "4.3E"},
+	{518, "4.3K"},
+	{544, "4.3J (4.0.0)"},
+	{545, "4.3U (4.0.0)"},
+	{546, "4.3E (4.0.0)"},
+	{608, "4.3J (5.2.0)"},
+	{609, "4.3U (5.2.0)"},
+	{610, "4.3E (5.2.0)"},
+	{4609, "4.3U (Mini)"},
+	{4610, "4.3E (Mini)"}
+};
+
+char* get_system_menu_version_string(u16 number) {
+	u8 table_size = sizeof(version_table) / sizeof(version_table[0]);
+
+	for (u8 i = 0; i < table_size; i++) {
+		if (version_table[i].number == number) {
+			return version_table[i].string;
+		}
+	}
+
+	return "????"; // no system menu version installed, or weird patched one?
+}
+
 // thanks Naim2000/thepikachugamer for this method of detecting dolphin
 bool is_dolphin(void) {
 	if (!~dolphin_fd) { // has this already been checked for? if not:
