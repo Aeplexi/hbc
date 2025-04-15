@@ -19,7 +19,7 @@
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
 
-#define TRANS_STEPS 20
+#define TRANS_STEPS 15
 #define MAX_ROWS 5
 
 static view *v_m_main;
