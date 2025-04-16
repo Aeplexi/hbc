@@ -5,16 +5,24 @@
 
 #define IS_VWII ((*(vu32*)(0xCD8005A0) >> 16 ) == 0xCAFE)
 
-char* get_wii_model(void);
+typedef enum {
+	MODEL_WII = 0,
+	MODEL_FAMILY,
+	MODEL_MINI,
+	MODEL_WIIU,
+	MODEL_DOLPHIN,
+	MODEL_NDEV
+} wii_models;
+
+int get_wii_model(void);
 s32 check_connection(void);
 void get_serial(char* code);
-int check_setting(void);
 void get_hardware_region(char* region);
-char* get_area(void);
 void get_model_number(char* model_setting);
 bool priiloader_is_installed(void);
 bool bootmii_ios_is_installed(u64 title_id);
 void bootmii_ios_version(u64 title_id, char* outbuf);
+bool is_oct_31st();
 char* get_system_menu_version_string(u16 number);
 
 #endif

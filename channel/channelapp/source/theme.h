@@ -72,6 +72,8 @@ extern const char *theme_fn_xml;
 void theme_init(u8 *data, u32 data_len);
 void theme_deinit(void);
 
+void delete_theme(void);
+
 bool theme_is_valid_fn(const char *filename);
 
 #endif

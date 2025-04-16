@@ -30,6 +30,8 @@ static int columns_new = 1;
 
 static bool inited_widgets = false;
 
+extern bool view_fakelogo;
+
 view * browser_init(void) {
 	v_browser = view_new (AE_OFFSET + (MAX_COLUMNS * ROWS * 2), NULL,
 							0, 0, 0, 0);
@@ -139,6 +141,7 @@ void browser_gen_view(browser_action action, const app_entry *app) {
 
 	case BA_ADD:
 	case BA_REFRESH:
+		view_fakelogo = false;
 		browser_set_top_offset(app);
 		break;
 

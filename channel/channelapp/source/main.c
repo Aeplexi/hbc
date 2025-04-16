@@ -74,14 +74,18 @@ static const char *text_error_delete;
 static const char *text_wired;
 static const char *text_wireless;
 static const char *text_not_connected;
-static const char *string_sysinfo;
+static const char *text_sysinfo;
+static const char *text_installed;
+static const char *text_not_installed;
+static const char *area_names[14];
+static const char *model_names[6];
 
 extern enum menuindex menu_index;
 extern enum menuindex parent_menu;
 
 extern bool viewing;
 
-extern bool show_fakelogo;
+extern bool view_fakelogo;
 
 extern bool egg;
 
@@ -266,8 +270,8 @@ static void load_text(void) {
 	text_error_delete = _("Error deleting '%s'");
 	text_wired = _("Wired");
 	text_wireless = _("Wireless");
-	text_not_connected = _("Not Connected");
-	string_sysinfo =
+	text_not_connected = _("Not connected");
+	text_sysinfo = _(
 		"S/N: %s\n"
 		"Console: %s (%s)\n"
 		"Hollywood version: v0x%x\n"
@@ -276,7 +280,31 @@ static void load_text(void) {
 		"System Menu: %s (v%u)\n"
 		"Priiloader: %s\n"
 		// "BootMii (boot2): Not implemented\n"
-		"BootMii (IOS): %s";
+		"BootMii (IOS): %s");
+	text_installed = _("Installed");
+	text_not_installed = _("Not installed");
+
+	area_names[0] = _("Japan");
+	area_names[1] = _("United States");
+	area_names[2] = _("Europe");
+	area_names[3] = _("Australia");
+	area_names[4] = _("Brazil");
+	area_names[5] = _("Taiwan");
+	area_names[6] = _("Republic of China");
+	area_names[7] = _("Korea");
+	area_names[8] = _("Hong Kong");
+	area_names[9] = _("Asia");
+	area_names[10] = _("Latin America");
+	area_names[11] = _("South Africa");
+	area_names[12] = _("China (ique wtf?)");
+	area_names[13] = _("unknown");
+
+	model_names[0] = _("Wii");
+	model_names[1] = _("Wii Family Edition");
+	model_names[2] = _("Wii Mini");
+	model_names[3] = _("Wii U");
+	model_names[4] = _("Dolphin");
+	model_names[5] = _("NDEV");
 }
 
 static void refresh_theme(view *v, app_entry *app, u8 *data, u32 data_len) {
@@ -332,6 +360,7 @@ void main_real(void) {
 	char region[4];
 	char model_number[13];
 	char bootmii_ver[5];
+	s32 area = CONF_GetArea();
 
 	bootmii_ios_version(TITLEID_BOOTMII, bootmii_ver);
 
@@ -452,16 +481,18 @@ void main_real(void) {
 		if ((bd & PADS_HOME) && viewing) {
 			if (v_current == v_browser) {
 				menu_index = MENU_HOME;
-				m_main_theme_reinit();
-				m_main_update();
+				browser_gen_view(BA_REMOVE, NULL);
+				m_main_gen_view();
 				v_current = v_m_main;
 				view_set_focus (v_m_main, 0);
 
 				continue;
 			} else {
-				if (v_current == v_m_main)
+				if (v_current == v_m_main) {
+					m_main_fade(false);
 					v_current = v_browser;
-
+					browser_gen_view(BA_REFRESH, NULL);
+				}
 				continue;
 			}
 		}
@@ -469,12 +500,13 @@ void main_real(void) {
 		if ((v_current == v_m_main) && viewing) {
 			view_fakelogo = true;
 			if (bd & PADS_B) {
+				m_main_fade(false);
 				if (menu_index == MENU_HOME) {
 					v_current = v_browser;
+					browser_gen_view(BA_REFRESH, NULL);
 				} else {
 					menu_index = parent_menu;
-					m_main_theme_reinit();
-					m_main_update();
+					m_main_gen_view();
 				}
 				continue;
 			}
@@ -489,19 +521,19 @@ void main_real(void) {
 				if (menu_index == MENU_HOME) {
 					switch (v_m_main->focus) {
 						case 0:
-							show_message(v_current, DLGMT_ERROR, DLGB_OK,
-										"Unimplemented", 0);
+							menu_index = MENU_SETTINGS;
+							m_main_fade(false);
+							m_main_gen_view();
 							continue;
-
 						case 1:
 							get_serial(code);
 							get_hardware_region(region);
 							get_model_number(model_number);
-							snprintf(sysinfo_buf, 300, string_sysinfo, code, get_wii_model(),
-									 model_number, (*(vu32*)0x80003138), region, get_area(),
+							snprintf(sysinfo_buf, 300, text_sysinfo, code, model_names[get_wii_model()],
+									 model_number, (*(vu32*)0x80003138), region, area_names[area],
 									 system_menu_version_string, system_menu_tmd_version,
-									 priiloader_is_installed() ? "Installed" : "Not installed",
-									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : "Not installed");
+									 priiloader_is_installed() ? text_installed : text_not_installed,
+									 bootmii_ios_is_installed(TITLEID_BOOTMII) ?  bootmii_ver : text_not_installed);
 							show_message(v_current, DLGMT_SYSINFO, DLGB_NONE,
 										 sysinfo_buf, 0);
 							continue;
@@ -520,8 +552,8 @@ void main_real(void) {
 
 						case 3:
 							menu_index = MENU_EXIT;
-							m_main_theme_reinit();
-							m_main_update();
+							m_main_fade(false);
+							m_main_gen_view();
 							continue;
 					}
 				} else if (menu_index == MENU_EXIT) {
@@ -544,8 +576,30 @@ void main_real(void) {
 							shutdown = true;
 							break;
 					}
+				} else if (menu_index == MENU_SETTINGS) {
+					switch (v_m_main->focus) {
+						case 0: // Theme (currently resets theme)
+							delete_theme();
+							menu_index = parent_menu;
+							m_main_fade(false);
+							browser_gen_view(BA_REFRESH, NULL);
+							v_current = v_browser;
+							refresh_theme(v_current, app_sel, NULL, 0);
+							break;
+						case 1: // Sound
+							show_settings_dialog(v_current, SETM_SOUND);
+							break;
+						case 2: // Language
+							show_settings_dialog(v_current, SETM_LANG);
+							break;
+						case 3: // Parental Controls
+							show_settings_dialog(v_current, SETM_PARENTAL);
+							break;
+						case 4: // Miscellaneous (currently Menu Test)
+							show_settings_dialog(v_current, SETM_TEST);
+							break;
+					}
 				}
-
 			continue;
 			}
 		}

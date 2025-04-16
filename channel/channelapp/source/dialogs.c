@@ -13,6 +13,7 @@
 #include "view.h"
 #include "xml.h"
 #include "panic.h"
+#include "menus.h"
 
 #include "dialogs.h"
 
@@ -34,14 +35,15 @@ static const char *caption_confirm;
 static const char *caption_warning;
 static const char *caption_error;
 static const char *caption_sysinfo;
-static const char *caption_ok;
-static const char *caption_cancel;
-static const char *caption_yes;
-static const char *caption_no;
-static const char *caption_delete;
-static const char *caption_load;
-static const char *caption_back;
+const char *caption_ok;
+const char *caption_cancel;
+const char *caption_yes;
+const char *caption_no;
+const char *caption_delete;
+const char *caption_load;
+const char *caption_back;
 static const char *caption_options;
+static const char *caption_settings_titles[SETM_COUNT];
 static const char *caption_device;
 static const char *caption_device_names[DEVICE_COUNT];
 static const char *caption_sort_by;
@@ -74,6 +76,12 @@ void dialogs_theme_reinit (void) {
 	caption_load = _("Load");
 	caption_back = _("Back");
 	caption_options = _("Options");
+	caption_settings_titles[0] = _("Theme");
+	caption_settings_titles[1] = _("Sound");
+	caption_settings_titles[2] = _("Language");
+	caption_settings_titles[3] = _("Parental Controls");
+	caption_settings_titles[4] = _("Miscellaneous");
+	caption_settings_titles[5] = _("Menu Test");
 	caption_device = _("Device:");
 	caption_device_names[0] = _("Internal SD Slot");
 	caption_device_names[1] = _("USB device");
@@ -495,6 +503,30 @@ s8 show_message (const view *sub_view, dialog_message_type type,
 }
 
 #define DLG_DEV_FIRST 4
+
+void show_settings_dialog(const view *sub_view, settings_menu menu) {
+	view *v;
+
+	app_entry_poll_status(true);
+
+	v = view_new (16, sub_view, (view_width - theme_gfx[THEME_DIALOG]->w) / 2,
+				  44, TEX_LAYER_DIALOGS, PADS_B);
+
+	widget_image (&v->widgets[0], 0, 0, 0, theme_gfx[THEME_DIALOG],
+				  NULL, false, NULL);
+	widget_label (&v->widgets[1], 32, 16, 1, caption_settings_titles[menu],
+				  theme_gfx[THEME_DIALOG]->w - 64, FA_CENTERED, FA_ASCENDER, FONT_DLGTITLE);
+
+	switch (menu) {
+		case SETM_TEST:
+			submenu_menutest(v);
+			break;
+	}
+
+	dialog_fade (v, false);
+
+	view_free (v);
+}
 
 dialog_options_result show_options_dialog(const view *sub_view) {
 	u32 frame = 0;

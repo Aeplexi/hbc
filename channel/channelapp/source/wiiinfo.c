@@ -4,6 +4,7 @@
 #include <ogc/es.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <time.h>
 
 #include "wiiinfo.h"
 #include "../config.h"
@@ -144,31 +145,6 @@ void get_serial(char* code) {
 	strcat(code, serno);
 }
 
-int check_setting(void) {
-	char code[4];
-	char model[13];
-	s32 ret;
-
-	ret = __CONF_GetTxt("CODE", code, 4);
-	if (ret < 0)
-		return ret;
-
-	ret = __CONF_GetTxt("MODEL", model, 13);
-	if (ret < 0)
-		return ret;
-
-	if (model[2] == 'T') {
-		ret = 3;
-	}
-
-	if ((code[0] == 'K') | (model[4] == '1')) {
-		ret = 1;
-	} else if ((code[0] == 'H') | (model[4] == '2')) {
-		ret = 2;
-	}
-	return ret;
-}
-
 void get_hardware_region(char* region) {
 	s32 ret;
 	char model[13];
@@ -191,64 +167,30 @@ void get_model_number(char* model_setting) {
 	model_setting[7] = '\0';
 }
 
-char* get_area() {
-	// TODO: there definitely is a better way to do this, i know this kinda sucks
-	s32 area = CONF_GetArea();
-	switch (area) {
-		case CONF_AREA_JPN:
-			return "Japan";
-		case CONF_AREA_USA:
-			return "United States";
-		case CONF_AREA_EUR:
-			return "Europe";
-		case CONF_AREA_AUS:
-			return "Australia";
-		case CONF_AREA_BRA:
-			return "Brazil";
-		case CONF_AREA_TWN:
-			return "Taiwan";
-		case CONF_AREA_ROC:
-			return "Republic of China";
-		case CONF_AREA_KOR:
-			return "Korea";
-		case CONF_AREA_HKG:
-			return "Hong Kong";
-		case CONF_AREA_ASI:
-			return "Asia";
-		case CONF_AREA_LTN:
-			return "Latin America";
-		case CONF_AREA_SAF:
-			return "South Africa";
-		case CONF_AREA_CHN:
-			return "China (ique wtf?)";
-		default:
-			return "unknown";
-	}
-}
-
 // TODO: maybe use an enum later? needs revamp
-char* get_wii_model(void) {
-	int setting = check_setting();
+int get_wii_model(void) {
+	char code[4];
+	char model[13];
 
 	if (is_dolphin())
-		return "Dolphin";
+		return MODEL_DOLPHIN;
 	if (IS_VWII)
-		return "Wii U";
+		return MODEL_WIIU;
 
-	switch (setting) {
-		case 1:
-			return "Wii Family Edition";
+	__CONF_GetTxt("CODE", code, 4);
+	__CONF_GetTxt("MODEL", model, 13);
 
-		case 2:
-			return "Wii Mini";
-
-		case 3:
-			return "NDEV";
-
-		default:
-			return "Wii";
-
+	if (model[2] == 'T') {
+		return MODEL_NDEV;
 	}
+
+	if ((code[0] == 'K') | (model[4] == '1')) {
+		return MODEL_FAMILY;
+	} else if ((code[0] == 'H') | (model[4] == '2')) {
+		return MODEL_MINI;
+	}
+
+	return MODEL_WII;
 }
 
 bool bootmii_ios_is_installed(u64 title_id) {
@@ -372,4 +314,20 @@ bool priiloader_is_installed(void) {
 	NANDGetFileSize(path, &size);
 
 	return (size > 0);
+}
+
+// time for easter egg :)
+bool is_oct_31st() {
+	struct tm today;
+	time_t rawtime;
+	time(&rawtime);
+	today = *localtime(&rawtime);
+
+	gprintf("current date %2.2d/%2.2d/%4.4d", today.tm_mon + 1, today.tm_mday, today.tm_year + 1900);
+
+	if (today.tm_mon + 1 == 10 && today.tm_mday == 31) // October 31st (any year)
+	{
+		return true;
+	}
+	return false;
 }

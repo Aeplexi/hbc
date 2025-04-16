@@ -3,20 +3,24 @@
 #include <ogc/machine/processor.h>
 #include <ogcsys.h>
 #include <network.h>
+#include <math.h>
 
 #include "../config.h"
+#include "dialogs.h"
 #include "theme.h"
-#include "view.h"
 #include "loader.h"
 #include "i18n.h"
 #include "m_main.h"
 #include "wiiinfo.h"
 #include "nand.h"
 #include "fileops.h"
-#include "title.h"
+#include "menus.h"
 
 #define TITLE_UPPER(x) (u32)(x >> 32)
 #define TITLE_LOWER(x) (u32)(x & 0xFFFFFFFF)
+
+#define TRANS_STEPS 15
+#define MAX_ROWS 5
 
 static view *v_m_main;
 
@@ -52,13 +56,84 @@ void m_main_deinit(void) {
 }
 
 void m_main_theme_reinit(void) {
-	u16 x, y = 0, yadd = 0, button_count = 0;
+	text_no_ip = _("Network not initialized");
+	text_has_ip = _("Your Wii's IP is %u.%u.%u.%u");
+}
+
+void m_main_fade(bool fade_in) {
+	s8 focus;
+
+	u32 i, j;
+
+	u8 o;
+	s16 x;
+	float xm;
+	float vala = 0;
+	float val[MAX_ROWS];
+	float stepa = M_TWOPI / TRANS_STEPS;
+	float step = M_PI / (TRANS_STEPS - 6);
+	// s16 s;
+	float f;
+
+	memset(val, 0, sizeof(float) * MAX_ROWS);
+
+	o = MAX_ROWS;
+
+	focus = o;
+
+	// xal = v_m_main->widgets[0].coords.x;
+	// xar = v_m_main->widgets[1].coords.x;
+
+	if (fade_in) {
+		x = (3 * view_width - theme_gfx[THEME_BUTTON]->w) / 2;
+		xm = -view_width / 2;
+		// x2 = view_width + x2;
+	} else {
+		x = (view_width - theme_gfx[THEME_BUTTON]->w) / 2;
+		xm = view_width / 2;
+		// x2 = -view_width + x2;
+	}
+
+	for (i = 0; i < TRANS_STEPS; ++i) {
+		vala += stepa;
+		// s = roundf (156.0 * (cosf (vala) - 1));
+
+		// adjust L/R button positions
+		// v_m_main->widgets[0].coords.x = xal + s;
+		// v_m_main->widgets[1].coords.x = xar - s;
+
+		for (j = 0; j < MAX_ROWS; ++j) {
+			if ((i > j) &&
+				(i < TRANS_STEPS - MAX_ROWS + j))
+				val[j] += step;
+			if (fade_in) {
+				f = roundf (xm * (cosf (val[j]) - 1));
+			} else {
+				f = -roundf (xm * (cosf (val[j]) - 1));
+			}
+
+			v_m_main->widgets[j].coords.x = x - f;
+			v_m_main->widgets[j + 1].coords.x = x - f;
+		}
+
+		view_plot (v_m_main, 0, NULL, NULL, NULL);
+
+		if (i == TRANS_STEPS / 2) {
+		// 	widget_set_flag (&v_m_main->widgets[0], WF_VISIBLE, true);
+		// 	widget_set_flag (&v_m_main->widgets[1], WF_VISIBLE, true);
+		// 	widget_set_flag (&v_m_main->widgets[0], WF_VISIBLE, less);
+		// 	widget_set_flag (&v_m_main->widgets[1], WF_VISIBLE, more);
+			view_set_focus (v_m_main, focus);
+		}
+	}
+}
+
+void m_main_gen_view(void) {
+	u16 x, y = 0, yadd = 0;
 	int i;
 	char buffer[50];
 
-	text_no_ip = _("Network not initialized");
-	text_has_ip = _("Your Wii's IP is %u.%u.%u.%u");
-
+	view_fakelogo = true;
 	if (inited_widgets)
 		for (i = 0; i < v_m_main->widget_count; ++i)
 			widget_free(&v_m_main->widgets[i]);
@@ -67,89 +142,36 @@ void m_main_theme_reinit(void) {
 	y = 80 + (theme_gfx[THEME_BUTTON]->h / 2);
 
 	switch (menu_index) {
-
-		case MENU_HOME:
+		case MENU_HOME: // Home
 			parent_menu = MENU_HOME;
-
-			yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-
-			widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
-						   _("Settings"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
-						   _("System Info"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-						   _("About"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-						   _("Exit"));
+			menu_home(v_m_main, x, y, yadd);
 			break;
-		case MENU_EXIT:
+		case MENU_EXIT: // Exit
 			parent_menu = MENU_HOME;
-
-			button_count = 3 + bootmii_ios + priiloader;
-
-			if (button_count == 3) {
-				button_count = 5;
-				yadd = theme_gfx[THEME_BUTTON]->h/4;
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			} else if (button_count == 2) {
-				button_count = 4;
-				yadd = theme_gfx[THEME_BUTTON]->h*2/3;
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			} else {
-				yadd = ((theme_gfx[THEME_BUTTON]->h*(6-button_count))/(button_count-1));
-			}
-			// if you need to have 1 button in a menu, something's seriously wrong with either you or your way of thinking
-
-			if (bootmii_ios) {
-				widget_button (&v_m_main->widgets[0], x, y, 0, BTN_NORMAL,
-							   _("Launch BootMii IOS"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			}
-
-			if (priiloader) {
-				widget_button (&v_m_main->widgets[1], x, y, 0, BTN_NORMAL,
-							   _("Launch Priiloader"));
-				y += theme_gfx[THEME_BUTTON]->h + yadd;
-			}
-
-			widget_button (&v_m_main->widgets[2], x, y, 0, BTN_NORMAL,
-						   _("Exit to System Menu"));
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			if (IS_VWII) {
-				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							   _("Reboot to Wii U Menu"));
-			} else {
-				widget_button (&v_m_main->widgets[3], x, y, 0, BTN_NORMAL,
-							   _("Reboot"));
-			}
-			y += theme_gfx[THEME_BUTTON]->h + yadd;
-
-			widget_button (&v_m_main->widgets[4], x, y, 0, BTN_NORMAL,
-						   _("Shutdown"));
+			menu_exit(v_m_main, x, y, yadd, bootmii_ios, priiloader);
 			break;
+		case MENU_SETTINGS:	// Settings
+			parent_menu = MENU_HOME;
+			menu_settings(v_m_main, x, y, yadd);
 	}
 
 	// HBC and IOS version
 
 	widget_label (&v_m_main->widgets[6], view_width / 3 * 2 - 48,
 				  32, 0, CHANNEL_VERSION_STR,
-				  view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+				  view_width / 3, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	sprintf(buffer, "IOS%d v%d.%d", IOS_GetVersion(), IOS_GetRevisionMajor(),
 			IOS_GetRevisionMinor());
 
 	widget_label (&v_m_main->widgets[7], view_width / 3 * 2 - 48,
 				  32 + font_get_y_spacing(FONT_LABEL), 0, buffer,
-			   view_width / 3 - 0, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
+			   view_width / 3, FA_RIGHT, FA_ASCENDER, FONT_LABEL);
 
 	inited_widgets = true;
+
+	m_main_update();
+	m_main_fade(true);
 }
 
 void m_main_update (void) {
