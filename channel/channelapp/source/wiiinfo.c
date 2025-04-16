@@ -27,7 +27,7 @@ struct system_menu_version {
 static const struct system_menu_version version_table[] = {
 	// sorted by version
 	{0, "Prelaunch 0!?"},
-	{1, "Prelaunch 1??"},
+	{1, "Startup Disc Menu"},
 	{33, "1.0U"},
 	{34, "1.0E"},
 	{64, "1.0J"},
